@@ -147,7 +147,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.102</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.103</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
@@ -155,7 +155,7 @@
         <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6 space-y-6"><div><h3 style="color:var(--color-glow);text-transform:uppercase;font-weight:bold;font-size:0.875rem;border-bottom:1px solid var(--color-shadow);padding-bottom:8px;margin-bottom:16px;letter-spacing:0.1em">Audio</h3><div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--color-shadow)"><span>SFX Volume</span><div class="flex items-center gap-3"><input type="range" id="vol-slider" min="0" max="100" value="100" oninput="updateVolume(this.value)" style="accent-color:var(--color-primary);width:120px"><span id="vol-val" style="color:var(--color-glow);width:40px;text-align:right">100%</span></div></div><div class="flex items-center justify-between py-2"><span>Sound Effects</span><button id="sfx-toggle" onclick="toggleSFX()" class="btn-pixel text-sm px-4">ON</button></div></div></div><div class="subpanel-footer"></div></div>
     </div>
 
-<div id="game-container" class="hidden w-full h-full">
+<div id="game-container" class="hidden w-full h-full flex flex-col items-center">
 <div id="hud">
   <span>SCORE: <span id="score">0</span></span>
   <span>BEST: <span id="best">0</span></span>
@@ -167,12 +167,13 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.103</p>
 </div>
 
 <script>
     const PATCH_NOTES = [];
     const HS_KEY = 'classicpinball_hs';
-    function saveScore(score, label='') { const scores = getScores(); scores.push({ score, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); localStorage.setItem(HS_KEY, JSON.stringify(scores)); }
+    function saveScore(score, label='') { const scores = getScores(); scores.push({ score, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); } catch(e) {} }
     function getScores() { try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; } }
     function renderHighScores() { const el = document.getElementById('highscore-list'); const scores = getScores(); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); const shadow = getComputedStyle(document.documentElement).getPropertyValue('--color-shadow').trim(); if (!scores.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p>`; return; } el.innerHTML = scores.map((s,i) => `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid ${shadow};font-size:0.875rem"><span style="color:${primary};width:24px;text-align:right">${i+1}.</span><span style="flex:1;color:#fff">${s.label||'—'}</span><span style="color:${glow};font-weight:bold">${s.score}</span><span style="color:${primary};opacity:0.5;font-size:0.75rem">${s.date}</span></div>`).join(''); }
     function renderPatchNotes() { const el = document.getElementById('patchnotes-list'); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); if (!PATCH_NOTES.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No patch notes yet.</p>`; return; } el.innerHTML = PATCH_NOTES.map(p => `<div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><span style="color:${glow};font-weight:bold">${p.v}</span><span style="color:${primary};opacity:0.6;font-size:10px">${p.date}</span></div><ul style="margin:0;padding:0;list-style:none">${p.notes.map(n=>`<li style="color:#d1d5db">• ${n}</li>`).join('')}</ul></div>`).join(''); }
@@ -189,14 +190,16 @@ const ctx = canvas.getContext('2d');
 const W = canvas.width, H = canvas.height;
 
 const scoreEl = document.getElementById('score');
-const bestEl = document.getElementById('best');
+const bestEl  = document.getElementById('best');
 const ballsEl = document.getElementById('balls');
-const msgEl = document.getElementById('msg');
+const msgEl   = document.getElementById('msg');
 
 let score = 0;
 let best = parseInt(localStorage.getItem('cpb_best') || '0');
 let ballsLeft = 5;
 let gameOver = false;
+// Bug fix 1: track the rAF handle so we can cancel before restarting the loop
+let rafId = null;
 
 // Ball
 const ball = {
@@ -231,12 +234,19 @@ const walls = [
   { x1: 340, y1: H - 140, x2: 340, y2: H - 60 },
 ];
 
+// Bug fix 2: reset bumper state and topLaneFired when resetting the game state
+function resetBumpers() {
+  bumpers.forEach(b => { b.active = false; b.lit = 0; });
+}
+
 function resetBall() {
   ball.x = W / 2;
   ball.y = H - 120;
   ball.vx = 0;
   ball.vy = 0;
   ball.active = false;
+  // Bug fix 3: always clear topLaneFired on ball reset so a new ball can score the top lane
+  ball.topLaneFired = false;
   msgEl.textContent = 'PRESS SPACE TO LAUNCH';
 }
 
@@ -254,7 +264,7 @@ function addScore(pts) {
   if (score > best) {
     best = score;
     bestEl.textContent = best;
-    localStorage.setItem('cpb_best', best);
+    try { localStorage.setItem('cpb_best', best); } catch(e) {}
   }
 }
 
@@ -465,7 +475,8 @@ function loop() {
   drawFlipperAngles();
   update();
   draw();
-  requestAnimationFrame(loop);
+  // Bug fix 4: store the rAF id so it can be cancelled before a new loop is started
+  rafId = requestAnimationFrame(loop);
 }
 
 // Controls
@@ -475,9 +486,11 @@ document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
     if (gameOver) {
+      // Bug fix 5: reset bumpers on restart so all bumpers fire correctly from the start
       score = 0; scoreEl.textContent = 0;
       ballsLeft = 5; ballsEl.textContent = 5;
       gameOver = false;
+      resetBumpers();
       resetBall();
     } else {
       launchBall();
@@ -490,22 +503,23 @@ document.addEventListener('keyup', e => {
 });
 
 // Touch / mobile
-const btnL = { x: 0, y: H * 0.6, w: W * 0.45, h: H * 0.4 };
-const btnR = { x: W * 0.55, y: H * 0.6, w: W * 0.45, h: H * 0.4 };
-
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
   [...e.changedTouches].forEach(t => {
     const r = canvas.getBoundingClientRect();
     const cx = (t.clientX - r.left) * (W / r.width);
-    const cy = (t.clientY - r.top)  * (H / r.height);
     if (cx < W / 2) flippers.left.pressed  = true;
     else             flippers.right.pressed = true;
-    if (!ball.active && !gameOver) launchBall();
     if (gameOver) {
+      // Bug fix 6: reset bumpers on touch restart; also fix ordering — clear gameOver before launchBall
       score = 0; scoreEl.textContent = 0;
       ballsLeft = 5; ballsEl.textContent = 5;
-      gameOver = false; resetBall(); launchBall();
+      gameOver = false;
+      resetBumpers();
+      resetBall();
+      launchBall();
+    } else if (!ball.active) {
+      launchBall();
     }
   });
 }, { passive: false });
@@ -521,16 +535,17 @@ canvas.addEventListener('touchend', e => {
 }, { passive: false });
 
 function initGame() {
+  // Bug fix 7: cancel any existing rAF loop before starting a new one
+  if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
   score = 0; scoreEl.textContent = 0;
   best = parseInt(localStorage.getItem('cpb_best') || '0');
   bestEl.textContent = best;
   ballsLeft = 5; ballsEl.textContent = 5;
   gameOver = false;
+  resetBumpers();
   resetBall();
   loop();
 }
 </script>
-
-<p style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.102</p>
 </body>
 </html>
