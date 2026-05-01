@@ -2,15 +2,109 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Classic Pinball</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
-  #hud { color: #ff0; font-size: 18px; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 40px; }
-  #hud span { text-shadow: 0 0 8px #ff0; }
-  canvas { border: 3px solid #444; display: block; }
-  #msg { color: #ff0; font-size: 22px; letter-spacing: 3px; margin-top: 10px; min-height: 28px; text-shadow: 0 0 10px #ff0; }
+
+  body {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: monospace;
+    overflow-x: hidden;
+    /* safe-area padding so nothing is clipped by notch / home bar */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  #hud {
+    color: #ff0;
+    font-size: clamp(12px, 4vw, 18px);
+    letter-spacing: clamp(1px, 0.5vw, 2px);
+    margin-bottom: 6px;
+    display: flex;
+    gap: clamp(12px, 5vw, 40px);
+    width: 100%;
+    max-width: 400px;
+    justify-content: space-around;
+    padding: 0 4px;
+  }
+  #hud span { text-shadow: 0 0 8px #ff0; white-space: nowrap; }
+
+  canvas {
+    border: 3px solid #444;
+    display: block;
+    /* Scale canvas down to fit the viewport width, never exceed natural size */
+    width: min(400px, 100vw - 6px);        /* 6px = 2×3px border */
+    height: auto;
+    /* Also cap height so it fits the screen vertically */
+    max-height: calc(100dvh - 116px);      /* HUD ~32px + msg ~32px + footer ~22px + padding ~30px */
+    object-fit: contain;
+    touch-action: none;                    /* prevent scroll hijack on canvas */
+  }
+
+  #msg {
+    color: #ff0;
+    font-size: clamp(14px, 4.5vw, 22px);
+    letter-spacing: clamp(1px, 0.8vw, 3px);
+    margin-top: 8px;
+    min-height: 24px;
+    text-shadow: 0 0 10px #ff0;
+    text-align: center;
+    padding: 0 8px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Landscape: constrain height, let canvas shrink to fit */
+  @media (orientation: landscape) and (max-height: 500px) {
+    body { justify-content: flex-start; padding-top: max(4px, env(safe-area-inset-top)); }
+    #hud { margin-bottom: 2px; font-size: clamp(10px, 2vh, 14px); gap: clamp(8px, 3vw, 20px); }
+    canvas { max-height: calc(100dvh - 72px); }
+    #msg { font-size: clamp(11px, 2.5vh, 16px); margin-top: 2px; min-height: 18px; }
+  }
+
+  /* Canvas wrapper — needed to position tap-hint overlays */
+  #canvas-wrap {
+    position: relative;
+    display: inline-block;
+    line-height: 0; /* collapse gap under canvas */
+  }
+
+  /* Tap-zone hint badges — only visible on touch devices */
+  .tap-hint {
+    display: none;
+    position: absolute;
+    bottom: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,255,255,0.15);
+    border: 2px solid rgba(0,255,255,0.5);
+    color: #0ff;
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none; /* touches pass through to canvas */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .tap-hint.left  { left: 8px; }
+  .tap-hint.right { right: 8px; }
+
+  @media (hover: none) and (pointer: coarse) {
+    .tap-hint { display: flex; }
+  }
 </style>
 </head>
 <body>
@@ -19,7 +113,11 @@
   <span>BEST: <span id="best">0</span></span>
   <span>BALLS: <span id="balls">5</span></span>
 </div>
-<canvas id="c" width="400" height="700"></canvas>
+<div id="canvas-wrap">
+  <canvas id="c" width="400" height="700"></canvas>
+  <div class="tap-hint left">L</div>
+  <div class="tap-hint right">R</div>
+</div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
 
 <script>
@@ -364,6 +462,6 @@ canvas.addEventListener('touchend', e => {
 loop();
 </script>
 
-<p style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.100</p>
+<p style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.101</p>
 </body>
 </html>
