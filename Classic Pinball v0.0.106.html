@@ -147,7 +147,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.105</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.106</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
@@ -168,7 +168,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.105</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.106</p>
 </div>
 
 <script>
@@ -276,7 +276,7 @@ function resetBall() {
   rallyFrames      = 0;
   allBumpersCleared = false;
   multEl.textContent = 'x1.0';
-  bumpers.forEach(b => { b.hits = 0; });
+  bumpers.forEach(b => { b.hits = 0; b.active = false; });
   msgEl.textContent = 'PRESS SPACE TO LAUNCH';
 }
 
@@ -331,10 +331,25 @@ function collideFlipper(f) {
     const launch = Math.max(speed, 10) * boost;
     ball.vx = nx * launch;
     ball.vy = ny * launch;
-    // push out
-    ball.x = cp.x + nx * (ball.r + 5);
-    ball.y = cp.y + ny * (ball.r + 5);
+    // push out — clearance must match the collision threshold (ball.r + 6) to prevent re-entry next frame
+    ball.x = cp.x + nx * (ball.r + 6);
+    ball.y = cp.y + ny * (ball.r + 6);
   }
+}
+
+function collideWall(w) {
+  const cp = closestPointOnSegment(ball.x, ball.y, w.x1, w.y1, w.x2, w.y2);
+  const dx = ball.x - cp.x, dy = ball.y - cp.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist === 0 || dist >= ball.r + 3) return;
+  const nx = dx / dist, ny = dy / dist;
+  // Reflect velocity about the wall normal
+  const dot = ball.vx * nx + ball.vy * ny;
+  ball.vx -= 2 * dot * nx * 0.85;
+  ball.vy -= 2 * dot * ny * 0.85;
+  // Push out so the ball sits just outside the wall
+  ball.x = cp.x + nx * (ball.r + 3);
+  ball.y = cp.y + ny * (ball.r + 3);
 }
 
 function collideBumper(b) {
@@ -394,6 +409,9 @@ function update() {
 
   // Bumpers
   bumpers.forEach(b => { if (b.lit > 0) b.lit--; collideBumper(b); });
+
+  // Gutter-guide walls (slingshots)
+  walls.forEach(collideWall);
 
   // Flippers
   collideFlipper(flippers.left);
