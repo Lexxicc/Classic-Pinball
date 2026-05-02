@@ -147,7 +147,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.106</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.107</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
@@ -168,10 +168,11 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.106</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.107</p>
 </div>
 
 <script>
+    (function(){ var _k='cp_wipe_v107'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [];
     const HS_KEY = 'classicpinball_hs';
     function saveScore(score, label='') { const scores = getScores(); scores.push({ score, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); } catch(e) {} }
