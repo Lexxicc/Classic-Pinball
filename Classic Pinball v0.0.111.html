@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball</title>
+<title>Classic Pinball v0.0.111</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -147,9 +147,31 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.108</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.111</p>
         </div>
-        <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
+        <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">OBJECTIVE</div>
+    <p>Keep the ball alive and rack up the highest score you can before losing all 5 balls. Every shot counts — the longer your ball stays up, the more every hit is worth.</p>
+  </div>
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">CONTROLS</div>
+    <div><span style="color:var(--color-glow)">LEFT PADDLE</span> — Tap left half of screen / Arrow Left / Z</div>
+    <div><span style="color:var(--color-glow)">RIGHT PADDLE</span> — Tap right half of screen / Arrow Right / /</div>
+    <p style="margin-top:6px;opacity:0.75">Tap anywhere to launch the ball when it's ready.</p>
+  </div>
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">BUMPERS</div>
+    <div>• First hit on any bumper — <span style="color:var(--color-glow)">100 pts</span></div>
+    <div>• Repeat hits on the same bumper — <span style="color:var(--color-glow)">50 pts</span></div>
+    <div>• Hit all bumpers in one ball — <span style="color:var(--color-glow)">1,000 pt bonus</span></div>
+    <div>• Top lane shot — <span style="color:var(--color-glow)">750 pts</span> (once per ball)</div>
+  </div>
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">RALLY MULTIPLIER</div>
+    <p>The longer your ball stays alive, the higher the multiplier. It starts at <span style="color:var(--color-glow)">x1.0</span> and rises by <span style="color:var(--color-glow)">+0.25</span> every ~10 seconds, up to a max of <span style="color:var(--color-glow)">x3.0</span>. Every point scored is multiplied by the current value. Lose the ball and it resets to x1.0.</p>
+  </div>
+</div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-patchnotes" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Patch Notes</h2></div><div id="patchnotes-list" class="p-5 text-[12px] space-y-5"></div><div class="subpanel-footer"></div></div>
         <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6"><p style="color:var(--color-primary);opacity:0.5;text-align:center;font-size:0.875rem;margin-top:32px">No settings available yet.</p></div><div class="subpanel-footer"></div></div>
@@ -161,19 +183,133 @@
   <span>BEST: <span id="best">0</span></span>
   <span>BALLS: <span id="balls">5</span></span>
   <span>MULT: <span id="mult">x1.0</span></span>
+  <button id="mute-btn" onclick="toggleMute()" title="Mute / Unmute" style="background:none;border:1px solid #ff0;color:#ff0;font-size:clamp(11px,3.5vw,15px);letter-spacing:0.05em;cursor:pointer;padding:4px 8px;min-width:44px;min-height:44px;line-height:1;text-shadow:0 0 8px #ff0;font-family:monospace;text-transform:uppercase;">SFX</button>
 </div>
 <div id="canvas-wrap">
   <canvas id="c" width="400" height="700"></canvas>
   <div class="tap-hint left">L</div>
   <div class="tap-hint right">R</div>
 </div>
-<div id="msg">PRESS SPACE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.108</p>
+<div id="msg">TAP TO LAUNCH</div>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.111</p>
 </div>
 
 <script>
-    (function(){ var _k='cp_wipe_v108'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
+// ─── Web Audio soundscape ────────────────────────────────────────────────────
+const _ac = { ctx: null };
+function _audioCtx() {
+  if (!_ac.ctx) _ac.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  return _ac.ctx;
+}
+let _muted = false;
+function toggleMute() {
+  _muted = !_muted;
+  const btn = document.getElementById('mute-btn');
+  if (btn) {
+    btn.textContent = _muted ? 'MUTE' : 'SFX';
+    btn.style.opacity = _muted ? '0.4' : '1';
+  }
+}
+function playTone(freq, dur, type='sine', vol=0.3, delay=0) {
+  if (_muted) return;
+  try {
+    const ctx = _audioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+    gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur);
+    osc.start(ctx.currentTime + delay);
+    osc.stop(ctx.currentTime + delay + dur);
+  } catch(e) {}
+}
+function playNoise(dur, vol=0.2) {
+  if (_muted) return;
+  try {
+    const ctx = _audioCtx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    src.buffer = buf; src.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    src.start(); src.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+
+// Individual sound functions
+function sfxFlipper() {
+  // Short mechanical thwack: brief noise burst + low thud
+  playNoise(0.04, 0.18);
+  playTone(120, 0.06, 'square', 0.15);
+}
+function sfxBumper() {
+  // Sharp ping: high sine spike
+  playTone(900, 0.12, 'sine', 0.35);
+  playTone(1400, 0.06, 'sine', 0.12);
+}
+function sfxLaunch() {
+  // Whoosh: noise sweep + low thud
+  playNoise(0.18, 0.25);
+  playTone(80, 0.15, 'sine', 0.2);
+  playTone(55, 0.2, 'triangle', 0.25, 0.12);
+}
+function sfxScoreDing() {
+  // Short high chime
+  playTone(1200, 0.1, 'sine', 0.18);
+  playTone(1600, 0.07, 'sine', 0.1, 0.05);
+}
+function sfxMultiplier() {
+  // Ascending 3-note phrase
+  playTone(440, 0.1, 'sine', 0.22);
+  playTone(550, 0.1, 'sine', 0.22, 0.1);
+  playTone(660, 0.15, 'sine', 0.22, 0.2);
+}
+function sfxBallLost() {
+  // Descending sad tone
+  if (_muted) return;
+  try {
+    const ctx = _audioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+  } catch(e) {}
+}
+function sfxGameOver() {
+  // Low thud + descending phrase
+  playNoise(0.12, 0.3);
+  playTone(220, 0.25, 'square', 0.25);
+  playTone(180, 0.2,  'sine',   0.2,  0.2);
+  playTone(140, 0.2,  'sine',   0.2,  0.38);
+  playTone(100, 0.3,  'sine',   0.25, 0.55);
+  playTone(70,  0.4,  'triangle', 0.2, 0.8);
+}
+// ─── End audio ───────────────────────────────────────────────────────────────
+
+    (function(){ var _k='cp_wipe_v111'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.111', date: '2026-05-02', notes: [
+        'Add basic soundscape — Web Audio synthesised sounds',
+        'Mute/unmute toggle added'
+      ]},
+      { v: 'v0.0.110', date: '2026-05-02', notes: [
+        'Ball now drops in from one of 5 positions above the top of the board',
+        'Removed spacebar references — mobile-only controls'
+      ]},
+      { v: 'v0.0.109', date: '2026-05-02', notes: [
+        'Added How to Play content'
+      ]},
       { v: 'v0.0.108', date: '2026-05-02', notes: [
         'saveScore() now called on every game-over path (keyboard and touch)',
         'Removed non-functional audio controls from Settings to avoid misleading stubs',
@@ -278,30 +414,29 @@ function resetBumpers() {
   bumpers.forEach(b => { b.active = false; b.lit = 0; b.hits = 0; });
 }
 
+const DROP_X = [67, 133, 200, 267, 333]; // 5 evenly spaced drop positions
 function resetBall() {
-  ball.x = W / 2;
-  ball.y = H - 120;
+  ball.x = DROP_X[Math.floor(Math.random() * DROP_X.length)];
+  ball.y = -ball.r;
   ball.vx = 0;
   ball.vy = 0;
   ball.active = false;
-  // Bug fix 3: always clear topLaneFired on ball reset so a new ball can score the top lane
   ball.topLaneFired = false;
-  // Reset per-ball skill tracking
   rallyMult        = 1.0;
   rallyFrames      = 0;
   allBumpersCleared = false;
   multEl.textContent = 'x1.0';
   bumpers.forEach(b => { b.hits = 0; b.active = false; });
-  msgEl.textContent = 'PRESS SPACE TO LAUNCH';
+  msgEl.textContent = 'TAP TO LAUNCH';
 }
 
 function launchBall() {
   if (ball.active || gameOver) return;
-  // Deterministic straight-up launch — removes luck from initial trajectory
-  ball.vy = -14;
-  ball.vx = 0;
+  ball.vy = 2;
+  ball.vx = (Math.random() - 0.5) * 3;
   ball.active = true;
   msgEl.textContent = '';
+  sfxLaunch();
 }
 
 function addScore(pts) {
@@ -312,6 +447,7 @@ function addScore(pts) {
     best = score;
     bestEl.textContent = best;
   }
+  sfxScoreDing();
 }
 
 // Flipper geometry helpers
@@ -370,6 +506,7 @@ function collideBumper(b) {
   const dx = ball.x - b.x, dy = ball.y - b.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   if (dist < ball.r + b.r) {
+    sfxBumper();
     if (!b.active) {
       // First hit on this bumper this visit: 100 pts; repeat hits: 50 pts
       const pts = b.hits === 0 ? 100 : 50;
@@ -403,6 +540,7 @@ function update() {
   if (nextMult !== rallyMult) {
     rallyMult = nextMult;
     multEl.textContent = 'x' + rallyMult.toFixed(1);
+    sfxMultiplier();
   }
 
   // Gravity
@@ -445,8 +583,10 @@ function update() {
       saveScore(score);
       best = getBestFromScores();
       bestEl.textContent = best;
-      msgEl.textContent = 'GAME OVER — SPACE TO RESTART';
+      msgEl.textContent = 'GAME OVER — TAP TO RESTART';
+      sfxGameOver();
     } else {
+      sfxBallLost();
       resetBall();
     }
   }
@@ -567,22 +707,8 @@ function loop() {
 
 // Controls
 document.addEventListener('keydown', e => {
-  if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') flippers.left.pressed  = true;
-  if (e.code === 'ArrowRight' || e.code === 'KeySlash') flippers.right.pressed = true;
-  if (e.code === 'Space') {
-    e.preventDefault();
-    if (gameOver) {
-      // Score was already recorded in update() when the last ball was lost; wipe state for new game
-      score = 0; scoreEl.textContent = 0;
-      best = getBestFromScores(); bestEl.textContent = best;
-      ballsLeft = 5; ballsEl.textContent = 5;
-      gameOver = false;
-      resetBumpers();
-      resetBall();
-    } else {
-      launchBall();
-    }
-  }
+  if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') { if (!flippers.left.pressed)  { sfxFlipper(); } flippers.left.pressed  = true; }
+  if (e.code === 'ArrowRight' || e.code === 'KeySlash') { if (!flippers.right.pressed) { sfxFlipper(); } flippers.right.pressed = true; }
 });
 document.addEventListener('keyup', e => {
   if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') flippers.left.pressed  = false;
@@ -595,8 +721,8 @@ canvas.addEventListener('touchstart', e => {
   [...e.changedTouches].forEach(t => {
     const r = canvas.getBoundingClientRect();
     const cx = (t.clientX - r.left) * (W / r.width);
-    if (cx < W / 2) flippers.left.pressed  = true;
-    else             flippers.right.pressed = true;
+    if (cx < W / 2) { if (!flippers.left.pressed)  sfxFlipper(); flippers.left.pressed  = true; }
+    else             { if (!flippers.right.pressed) sfxFlipper(); flippers.right.pressed = true; }
     if (gameOver) {
       // Score was already recorded in update() when the last ball was lost; wipe state for new game.
       // Show the ready state first — ball launches on the next tap, consistent with keyboard behaviour.
