@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.2</title>
+<title>Classic Pinball v0.0.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -262,7 +262,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.2</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.3</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -306,7 +306,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS PADDLE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.2</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.3</p>
 </div>
 
 <script>
@@ -414,6 +414,14 @@ function sfxGameOver() {
 
     (function(){ var _k='cp_wipe_v2'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.3', date: '2026-05-02', notes: [
+        'Fixed bumper scoring — repeat hits now correctly award 50 pts instead of being blocked by the active flag',
+        'Fixed keyboard lock after game over — keydown/keyup handlers now bail out immediately when gameOver is true',
+        'Fixed touch restart path not saving score — saveScore() is now called before wiping state on touch restart',
+        'Fixed popstate not saving score on back navigation — score is saved before state is discarded',
+        'Fixed all-clear bonus failing on consecutive hits — all-clear check now re-evaluates after every hit',
+        'Fixed mid-game best score not persisted — best score is now written to localStorage on every increment, not just at game over'
+      ]},
       { v: 'v0.0.2', date: '2026-05-02', notes: [
         'Reduced overall ball speed by ~20% — lower launch velocity, tighter speed cap',
         'Widened both bottom paddles by ~33% for easier ball control',
@@ -454,8 +462,9 @@ function sfxGameOver() {
       ]}
     ];
     const HS_KEY = 'classicpinball_hs';
-    function getBestFromScores() { const s = getScores(); return s.length ? s[0].score : 0; }
-    function saveScore(scoreVal, label='') { const scores = getScores(); scores.push({ score: scoreVal, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); } catch(e) {} }
+    const MID_BEST_KEY = 'cpb_mid_best';
+    function getBestFromScores() { const s = getScores(); const listBest = s.length ? s[0].score : 0; const midBest = parseInt(localStorage.getItem(MID_BEST_KEY) || '0', 10) || 0; return Math.max(listBest, midBest); }
+    function saveScore(scoreVal, label='') { const scores = getScores(); scores.push({ score: scoreVal, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); localStorage.removeItem(MID_BEST_KEY); } catch(e) {} }
     function getScores() { try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; } }
     function renderHighScores() { const el = document.getElementById('highscore-list'); const scores = getScores(); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); const shadow = getComputedStyle(document.documentElement).getPropertyValue('--color-shadow').trim(); if (!scores.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p>`; return; } el.innerHTML = scores.map((s,i) => `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid ${shadow};font-size:0.875rem"><span style="color:${primary};width:24px;text-align:right">${i+1}.</span><span style="flex:1;color:#fff">${s.label||'—'}</span><span style="color:${glow};font-weight:bold">${s.score}</span><span style="color:${primary};opacity:0.5;font-size:0.75rem">${s.date}</span></div>`).join(''); }
     function renderPatchNotes() { const el = document.getElementById('patchnotes-list'); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); if (!PATCH_NOTES.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No patch notes yet.</p>`; return; } el.innerHTML = PATCH_NOTES.map(p => `<div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><span style="color:${glow};font-weight:bold">${p.v}</span><span style="color:${primary};opacity:0.6;font-size:10px">${p.date}</span></div><ul style="margin:0;padding:0;list-style:none">${p.notes.map(n=>`<li style="color:#d1d5db">• ${n}</li>`).join('')}</ul></div>`).join(''); }
@@ -470,6 +479,8 @@ function sfxGameOver() {
         if (!ov.classList.contains('hidden')) {
             showStartPanel('main', true);
         } else if (gc && !gc.classList.contains('hidden')) {
+            // Bug fix 4: save the current score before discarding game state on back navigation
+            if (!gameOver) { saveScore(score); }
             gc.classList.add('hidden');
             ov.classList.remove('hidden');
             showStartPanel('main', true);
@@ -583,6 +594,8 @@ function addScore(pts) {
   if (score > best) {
     best = score;
     bestEl.textContent = best;
+    // Bug fix 6: persist the new best immediately so it isn't lost if the player closes mid-game
+    try { localStorage.setItem(MID_BEST_KEY, String(best)); } catch(e) {}
   }
   sfxScoreDing();
 }
@@ -643,15 +656,16 @@ function collideBumper(b) {
   const dx = ball.x - b.x, dy = ball.y - b.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   if (dist < ball.r + b.r) {
-    sfxBumper();
+    // Only score and award the all-clear once per contact (use active as a per-contact flag)
     if (!b.active) {
-      // First hit on this bumper this visit: 100 pts; repeat hits: 50 pts
+      sfxBumper();
+      // Bug fix 1: award correct points — 100 for first hit, 50 for repeat hits
       const pts = b.hits === 0 ? 100 : 50;
       addScore(pts);
       b.hits++;
       b.lit = 15;
       b.active = true;
-      // Check if all bumpers have been struck at least once this ball
+      // Bug fix 5: re-evaluate all-clear after every hit rather than relying on a cached flag
       if (!allBumpersCleared && bumpers.every(bmp => bmp.hits > 0)) {
         allBumpersCleared = true;
         addScore(1000); // all-bumpers bonus
@@ -664,6 +678,7 @@ function collideBumper(b) {
     ball.x = b.x + nx * (ball.r + b.r + 1);
     ball.y = b.y + ny * (ball.r + b.r + 1);
   } else {
+    // Ball has left contact range — clear per-contact flag so next touch scores again
     b.active = false;
   }
 }
@@ -852,18 +867,22 @@ function loop() {
 }
 
 document.addEventListener('keydown', e => {
+  // Bug fix 2: bail out entirely when the game is over so keys don't cause errors or stale state
+  if (gameOver) return;
   if (e.code === 'ArrowLeft' || e.code === 'KeyZ') {
     if (!flippers.left.pressed) { sfxFlipper(); }
     flippers.left.pressed = true;
-    if (!ball.active && !gameOver) launchBall('left');
+    if (!ball.active) launchBall('left');
   }
   if (e.code === 'ArrowRight' || e.code === 'Slash') {
     if (!flippers.right.pressed) { sfxFlipper(); }
     flippers.right.pressed = true;
-    if (!ball.active && !gameOver) launchBall('right');
+    if (!ball.active) launchBall('right');
   }
 });
 document.addEventListener('keyup', e => {
+  // Bug fix 2: bail out when game is over
+  if (gameOver) return;
   if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') flippers.left.pressed  = false;
   if (e.code === 'ArrowRight' || e.code === 'Slash') flippers.right.pressed = false;
 });
@@ -877,6 +896,8 @@ canvas.addEventListener('touchstart', e => {
     if (side === 'left') { if (!flippers.left.pressed)  sfxFlipper(); flippers.left.pressed  = true; }
     else                 { if (!flippers.right.pressed) sfxFlipper(); flippers.right.pressed = true; }
     if (gameOver) {
+      // Bug fix 3: save score before wiping state, matching the keyboard restart path
+      saveScore(score);
       score = 0; scoreEl.textContent = 0;
       best = getBestFromScores(); bestEl.textContent = best;
       ballsLeft = 5; ballsEl.textContent = 5;
