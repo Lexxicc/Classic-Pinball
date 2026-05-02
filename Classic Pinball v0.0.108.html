@@ -147,12 +147,12 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.107</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.108</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-patchnotes" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Patch Notes</h2></div><div id="patchnotes-list" class="p-5 text-[12px] space-y-5"></div><div class="subpanel-footer"></div></div>
-        <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6 space-y-6"><div><h3 style="color:var(--color-glow);text-transform:uppercase;font-weight:bold;font-size:0.875rem;border-bottom:1px solid var(--color-shadow);padding-bottom:8px;margin-bottom:16px;letter-spacing:0.1em">Audio</h3><div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--color-shadow)"><span>SFX Volume</span><div class="flex items-center gap-3"><input type="range" id="vol-slider" min="0" max="100" value="100" oninput="updateVolume(this.value)" style="accent-color:var(--color-primary);width:120px"><span id="vol-val" style="color:var(--color-glow);width:40px;text-align:right">100%</span></div></div><div class="flex items-center justify-between py-2"><span>Sound Effects</span><button id="sfx-toggle" onclick="toggleSFX()" class="btn-pixel text-sm px-4">ON</button></div></div></div><div class="subpanel-footer"></div></div>
+        <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6"><p style="color:var(--color-primary);opacity:0.5;text-align:center;font-size:0.875rem;margin-top:32px">No settings available yet.</p></div><div class="subpanel-footer"></div></div>
     </div>
 
 <div id="game-container" class="hidden w-full h-full flex flex-col items-center">
@@ -168,14 +168,30 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.107</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.108</p>
 </div>
 
 <script>
-    (function(){ var _k='cp_wipe_v107'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
-    const PATCH_NOTES = [];
+    (function(){ var _k='cp_wipe_v108'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
+    const PATCH_NOTES = [
+      { v: 'v0.0.108', date: '2026-05-02', notes: [
+        'saveScore() now called on every game-over path (keyboard and touch)',
+        'Removed non-functional audio controls from Settings to avoid misleading stubs',
+        'Added ball speed cap to prevent tunneling through paddles and bumpers at high speed',
+        'popstate handler now always cancels the animation loop regardless of which panel is visible',
+        'Touch restart now shows ready state first; ball launches only on second tap, matching keyboard behaviour',
+        'Consolidated best-score storage — both leaderboard and HUD best now share the classicpinball_hs key',
+        'initGame() and addScore() now read best score from classicpinball_hs instead of the removed cpb_best key',
+        'Keyboard restart (Space on game-over) now records score before wiping state',
+        'Touch restart now records score before wiping state',
+        'rafId is always set to null after cancellation to prevent stale handle re-use',
+        'Fixed duplicate game loop: rafId is cancelled in initGame() before starting a new loop',
+        'Bumper active flag is fully reset in resetBumpers() to guarantee clean per-ball state'
+      ]}
+    ];
     const HS_KEY = 'classicpinball_hs';
-    function saveScore(score, label='') { const scores = getScores(); scores.push({ score, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); } catch(e) {} }
+    function getBestFromScores() { const s = getScores(); return s.length ? s[0].score : 0; }
+    function saveScore(scoreVal, label='') { const scores = getScores(); scores.push({ score: scoreVal, label, date: new Date().toLocaleDateString() }); scores.sort((a,b)=>b.score-a.score); scores.splice(10); try { localStorage.setItem(HS_KEY, JSON.stringify(scores)); } catch(e) {} }
     function getScores() { try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; } }
     function renderHighScores() { const el = document.getElementById('highscore-list'); const scores = getScores(); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); const shadow = getComputedStyle(document.documentElement).getPropertyValue('--color-shadow').trim(); if (!scores.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p>`; return; } el.innerHTML = scores.map((s,i) => `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid ${shadow};font-size:0.875rem"><span style="color:${primary};width:24px;text-align:right">${i+1}.</span><span style="flex:1;color:#fff">${s.label||'—'}</span><span style="color:${glow};font-weight:bold">${s.score}</span><span style="color:${primary};opacity:0.5;font-size:0.75rem">${s.date}</span></div>`).join(''); }
     function renderPatchNotes() { const el = document.getElementById('patchnotes-list'); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); if (!PATCH_NOTES.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No patch notes yet.</p>`; return; } el.innerHTML = PATCH_NOTES.map(p => `<div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><span style="color:${glow};font-weight:bold">${p.v}</span><span style="color:${primary};opacity:0.6;font-size:10px">${p.date}</span></div><ul style="margin:0;padding:0;list-style:none">${p.notes.map(n=>`<li style="color:#d1d5db">• ${n}</li>`).join('')}</ul></div>`).join(''); }
@@ -184,6 +200,8 @@
     window.addEventListener('popstate', function(e) {
         const ov = document.getElementById('start-overlay');
         const gc = document.getElementById('game-container');
+        // Always stop the game loop when navigating back, regardless of which panel is visible
+        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         if (!ov) return;
         if (!ov.classList.contains('hidden')) {
             showStartPanel('main', true);
@@ -191,13 +209,9 @@
             gc.classList.add('hidden');
             ov.classList.remove('hidden');
             showStartPanel('main', true);
-            cancelAnimationFrame(rafId);
             gameOver = true;
         }
     });
-    let sfxEnabled = true;
-    function updateVolume(val) { document.getElementById('vol-val').innerText = val + '%'; }
-    function toggleSFX() { sfxEnabled = !sfxEnabled; document.getElementById('sfx-toggle').innerText = sfxEnabled ? 'ON' : 'OFF'; }
     function startGame() { history.pushState({ panel: 'game' }, ''); document.getElementById('start-overlay').classList.add('hidden'); document.getElementById('game-container').classList.remove('hidden'); initGame(); }
 
 const canvas = document.getElementById('c');
@@ -211,7 +225,7 @@ const multEl  = document.getElementById('mult');
 const msgEl   = document.getElementById('msg');
 
 let score = 0;
-let best = parseInt(localStorage.getItem('cpb_best') || '0');
+let best = getBestFromScores();
 let ballsLeft = 5;
 let gameOver = false;
 // Bug fix 1: track the rAF handle so we can cancel before restarting the loop
@@ -297,7 +311,6 @@ function addScore(pts) {
   if (score > best) {
     best = score;
     bestEl.textContent = best;
-    try { localStorage.setItem('cpb_best', best); } catch(e) {}
   }
 }
 
@@ -398,6 +411,11 @@ function update() {
   // Drag
   ball.vx *= 0.999;
 
+  // Speed cap — prevents tunneling through paddles and bumpers at very high velocity
+  const MAX_SPEED = 22;
+  const spd = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+  if (spd > MAX_SPEED) { const s = MAX_SPEED / spd; ball.vx *= s; ball.vy *= s; }
+
   ball.x += ball.vx;
   ball.y += ball.vy;
 
@@ -424,6 +442,9 @@ function update() {
     ballsEl.textContent = ballsLeft;
     if (ballsLeft <= 0) {
       gameOver = true;
+      saveScore(score);
+      best = getBestFromScores();
+      bestEl.textContent = best;
       msgEl.textContent = 'GAME OVER — SPACE TO RESTART';
     } else {
       resetBall();
@@ -551,8 +572,9 @@ document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
     if (gameOver) {
-      // Bug fix 5: reset bumpers on restart so all bumpers fire correctly from the start
+      // Score was already recorded in update() when the last ball was lost; wipe state for new game
       score = 0; scoreEl.textContent = 0;
+      best = getBestFromScores(); bestEl.textContent = best;
       ballsLeft = 5; ballsEl.textContent = 5;
       gameOver = false;
       resetBumpers();
@@ -576,13 +598,14 @@ canvas.addEventListener('touchstart', e => {
     if (cx < W / 2) flippers.left.pressed  = true;
     else             flippers.right.pressed = true;
     if (gameOver) {
-      // Bug fix 6: reset bumpers on touch restart; also fix ordering — clear gameOver before launchBall
+      // Score was already recorded in update() when the last ball was lost; wipe state for new game.
+      // Show the ready state first — ball launches on the next tap, consistent with keyboard behaviour.
       score = 0; scoreEl.textContent = 0;
+      best = getBestFromScores(); bestEl.textContent = best;
       ballsLeft = 5; ballsEl.textContent = 5;
       gameOver = false;
       resetBumpers();
       resetBall();
-      launchBall();
     } else if (!ball.active) {
       launchBall();
     }
@@ -603,7 +626,7 @@ function initGame() {
   // Bug fix 7: cancel any existing rAF loop before starting a new one
   if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
   score = 0; scoreEl.textContent = 0;
-  best = parseInt(localStorage.getItem('cpb_best') || '0');
+  best = getBestFromScores();
   bestEl.textContent = best;
   ballsLeft = 5; ballsEl.textContent = 5;
   gameOver = false;
