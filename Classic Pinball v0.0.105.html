@@ -147,7 +147,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.104</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.105</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 text-[12px]"><p style="color:var(--color-primary);opacity:0.5;text-align:center;margin-top:32px">Coming soon.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
@@ -160,6 +160,7 @@
   <span>SCORE: <span id="score">0</span></span>
   <span>BEST: <span id="best">0</span></span>
   <span>BALLS: <span id="balls">5</span></span>
+  <span>MULT: <span id="mult">x1.0</span></span>
 </div>
 <div id="canvas-wrap">
   <canvas id="c" width="400" height="700"></canvas>
@@ -167,7 +168,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS SPACE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.104</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.105</p>
 </div>
 
 <script>
@@ -205,6 +206,7 @@ const W = canvas.width, H = canvas.height;
 const scoreEl = document.getElementById('score');
 const bestEl  = document.getElementById('best');
 const ballsEl = document.getElementById('balls');
+const multEl  = document.getElementById('mult');
 const msgEl   = document.getElementById('msg');
 
 let score = 0;
@@ -213,6 +215,14 @@ let ballsLeft = 5;
 let gameOver = false;
 // Bug fix 1: track the rAF handle so we can cancel before restarting the loop
 let rafId = null;
+
+// Skill-based scoring state
+// rallyMult: survival multiplier — grows as the ball stays alive longer
+// rallyFrames: frame counter for the current ball's survival time
+// allBumpersCleared: flag to award the all-bumpers-cleared bonus once per ball
+let rallyMult   = 1.0;
+let rallyFrames = 0;
+let allBumpersCleared = false;
 
 // Ball
 const ball = {
@@ -231,12 +241,13 @@ const flippers = {
 const FL = 60; // flipper length
 
 // Bumpers
+// hits: total times this bumper has been struck by the current ball (resets per ball)
 const bumpers = [
-  { x: 120, y: 200, r: 22, lit: 0, active: false },
-  { x: 280, y: 200, r: 22, lit: 0, active: false },
-  { x: 200, y: 150, r: 22, lit: 0, active: false },
-  { x: 150, y: 300, r: 18, lit: 0, active: false },
-  { x: 250, y: 300, r: 18, lit: 0, active: false },
+  { x: 120, y: 200, r: 22, lit: 0, active: false, hits: 0 },
+  { x: 280, y: 200, r: 22, lit: 0, active: false, hits: 0 },
+  { x: 200, y: 150, r: 22, lit: 0, active: false, hits: 0 },
+  { x: 150, y: 300, r: 18, lit: 0, active: false, hits: 0 },
+  { x: 250, y: 300, r: 18, lit: 0, active: false, hits: 0 },
 ];
 
 // Walls (slingshots) — as line segments the ball bounces off
@@ -249,7 +260,7 @@ const walls = [
 
 // Bug fix 2: reset bumper state and topLaneFired when resetting the game state
 function resetBumpers() {
-  bumpers.forEach(b => { b.active = false; b.lit = 0; });
+  bumpers.forEach(b => { b.active = false; b.lit = 0; b.hits = 0; });
 }
 
 function resetBall() {
@@ -260,19 +271,27 @@ function resetBall() {
   ball.active = false;
   // Bug fix 3: always clear topLaneFired on ball reset so a new ball can score the top lane
   ball.topLaneFired = false;
+  // Reset per-ball skill tracking
+  rallyMult        = 1.0;
+  rallyFrames      = 0;
+  allBumpersCleared = false;
+  multEl.textContent = 'x1.0';
+  bumpers.forEach(b => { b.hits = 0; });
   msgEl.textContent = 'PRESS SPACE TO LAUNCH';
 }
 
 function launchBall() {
   if (ball.active || gameOver) return;
+  // Deterministic straight-up launch — removes luck from initial trajectory
   ball.vy = -14;
-  ball.vx = (Math.random() - 0.5) * 4;
+  ball.vx = 0;
   ball.active = true;
   msgEl.textContent = '';
 }
 
 function addScore(pts) {
-  score += pts;
+  // Apply the rally (survival) multiplier; round to nearest integer
+  score += Math.round(pts * rallyMult);
   scoreEl.textContent = score;
   if (score > best) {
     best = score;
@@ -323,9 +342,17 @@ function collideBumper(b) {
   const dist = Math.sqrt(dx * dx + dy * dy);
   if (dist < ball.r + b.r) {
     if (!b.active) {
-      addScore(100);
+      // First hit on this bumper this visit: 100 pts; repeat hits: 50 pts
+      const pts = b.hits === 0 ? 100 : 50;
+      addScore(pts);
+      b.hits++;
       b.lit = 15;
       b.active = true;
+      // Check if all bumpers have been struck at least once this ball
+      if (!allBumpersCleared && bumpers.every(bmp => bmp.hits > 0)) {
+        allBumpersCleared = true;
+        addScore(1000); // all-bumpers bonus
+      }
     }
     const nx = dx / dist, ny = dy / dist;
     const speed = Math.max(Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy), 8) * 1.1;
@@ -340,6 +367,14 @@ function collideBumper(b) {
 
 function update() {
   if (!ball.active) return;
+
+  // Rally (survival) multiplier: increases by 0.25x every ~10 seconds (600 frames at 60 fps), capped at 3x
+  rallyFrames++;
+  const nextMult = Math.min(3.0, 1.0 + Math.floor(rallyFrames / 600) * 0.25);
+  if (nextMult !== rallyMult) {
+    rallyMult = nextMult;
+    multEl.textContent = 'x' + rallyMult.toFixed(1);
+  }
 
   // Gravity
   ball.vy += 0.35;
@@ -376,11 +411,9 @@ function update() {
     }
   }
 
-  // Bonus: top lane
+  // Bonus: top lane — once per ball, rewards deliberate skill shot to the top
   if (ball.y < 30 && ball.vy < 0) {
-    if (!ball.topLaneFired) { addScore(500); ball.topLaneFired = true; }
-  } else {
-    ball.topLaneFired = false;
+    if (!ball.topLaneFired) { addScore(750); ball.topLaneFired = true; }
   }
 }
 
@@ -426,7 +459,7 @@ function drawBumper(b) {
   ctx.font = 'bold 11px monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('100', b.x, b.y);
+  ctx.fillText(b.hits === 0 ? '100' : '+50', b.x, b.y);
   ctx.restore();
 }
 
@@ -453,7 +486,7 @@ function drawTable() {
   ctx.fillStyle = '#f0f';
   ctx.font = '10px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('+500', W / 2, 22);
+  ctx.fillText('+750', W / 2, 22);
 
   // Gutter guides
   ctx.strokeStyle = '#555';
