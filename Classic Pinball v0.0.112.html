@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.111</title>
+<title>Classic Pinball v0.0.112</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -137,7 +137,122 @@
     <div id="start-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" style="background:#000;">
         <div id="start-main" class="menu-scroll relative z-10">
             <div class="text-center pt-4 pb-4 px-6" style="border-bottom: 4px solid var(--color-shadow);">
-                <div style="min-height:180px; display:flex; align-items:center; justify-content:center;"><h1 style="font-family:'VT323',monospace; font-size:clamp(2.5rem,10vw,5rem); color:var(--color-glow); text-shadow:3px 3px 0 var(--color-shadow); text-transform:uppercase; letter-spacing:0.12em; line-height:1.1;">CLASSIC PINBALL</h1></div>
+                <div style="min-height:180px; display:flex; align-items:center; justify-content:center; padding: 8px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 175" width="520" height="175" style="max-width:min(520px,90vw);height:auto;" role="img" aria-label="Classic Pinball">
+  <defs>
+    <!-- Yellow glow for main text -->
+    <filter id="cp-glow-y" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8"   result="blur2"/>
+      <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Cyan glow for sub-text and decorations -->
+    <filter id="cp-glow-c" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur2"/>
+      <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Chrome gradient for letter fill -->
+    <linearGradient id="cp-chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="30%"  stop-color="#ffff88"/>
+      <stop offset="55%"  stop-color="#ffee00"/>
+      <stop offset="80%"  stop-color="#cc9900"/>
+      <stop offset="100%" stop-color="#ffee00"/>
+    </linearGradient>
+    <!-- Orange accent gradient for "PINBALL" -->
+    <linearGradient id="cp-orange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="25%"  stop-color="#ffaa44"/>
+      <stop offset="60%"  stop-color="#ff5500"/>
+      <stop offset="100%" stop-color="#cc3300"/>
+    </linearGradient>
+    <!-- Ball chrome gradient -->
+    <radialGradient id="cp-ball" cx="38%" cy="35%" r="60%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="40%"  stop-color="#aaddff"/>
+      <stop offset="100%" stop-color="#004466"/>
+    </radialGradient>
+    <!-- Bumper gradient -->
+    <radialGradient id="cp-bump" cx="40%" cy="35%" r="55%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="50%"  stop-color="#00ffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#004444"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background panel -->
+  <rect x="4" y="4" width="512" height="167" rx="10" ry="10" fill="#0a0a0a" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Decorative corner star — top-left -->
+  <g transform="translate(28,28)" filter="url(#cp-glow-c)">
+    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
+  </g>
+  <!-- Decorative corner star — top-right -->
+  <g transform="translate(492,28)" filter="url(#cp-glow-c)">
+    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
+  </g>
+  <!-- Decorative corner star — bottom-left -->
+  <g transform="translate(28,148)" filter="url(#cp-glow-c)">
+    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
+  </g>
+  <!-- Decorative corner star — bottom-right -->
+  <g transform="translate(492,148)" filter="url(#cp-glow-c)">
+    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
+  </g>
+
+  <!-- Left flipper decoration -->
+  <g filter="url(#cp-glow-c)">
+    <line x1="18" y1="130" x2="58" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <circle cx="18" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
+  </g>
+  <!-- Right flipper decoration (mirrored) -->
+  <g filter="url(#cp-glow-c)">
+    <line x1="502" y1="130" x2="462" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <circle cx="502" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
+  </g>
+
+  <!-- Bumper circles — left cluster -->
+  <circle cx="52" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
+  <circle cx="52" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="68" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
+
+  <!-- Bumper circles — right cluster -->
+  <circle cx="468" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
+  <circle cx="468" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="452" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
+
+  <!-- Ball in centre-top -->
+  <circle cx="260" cy="22" r="11" fill="url(#cp-ball)" filter="url(#cp-glow-c)" opacity="0.95"/>
+  <circle cx="260" cy="22" r="11" fill="none" stroke="#aaddff" stroke-width="1" opacity="0.7"/>
+
+  <!-- "CLASSIC" — top line -->
+  <text x="260" y="82"
+        font-family="'VT323', monospace"
+        font-size="62"
+        text-anchor="middle"
+        letter-spacing="6"
+        fill="url(#cp-chrome)"
+        filter="url(#cp-glow-y)"
+        paint-order="stroke"
+        stroke="#000" stroke-width="2">CLASSIC</text>
+
+  <!-- "PINBALL" — bottom line, orange accent -->
+  <text x="260" y="148"
+        font-family="'VT323', monospace"
+        font-size="72"
+        text-anchor="middle"
+        letter-spacing="8"
+        fill="url(#cp-orange)"
+        filter="url(#cp-glow-y)"
+        paint-order="stroke"
+        stroke="#000" stroke-width="2">PINBALL</text>
+
+  <!-- Horizontal rule lines flanking "CLASSIC" -->
+  <line x1="60" y1="36" x2="208" y2="36" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+  <line x1="312" y1="36" x2="460" y2="36" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+</svg>
+</div>
                 <div class="flex items-center justify-center gap-3 mt-2"><div class="flex-grow h-px" style="background:linear-gradient(to right,transparent,var(--color-primary))"></div><span style="font-size:1rem; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.4em;">KEEP THE BALL ALIVE</span><div class="flex-grow h-px" style="background:linear-gradient(to left,transparent,var(--color-primary))"></div></div>
             </div>
             <div class="flex flex-col">
@@ -147,7 +262,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.111</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.112</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -191,7 +306,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">TAP TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.111</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.112</p>
 </div>
 
 <script>
@@ -297,8 +412,11 @@ function sfxGameOver() {
 }
 // ─── End audio ───────────────────────────────────────────────────────────────
 
-    (function(){ var _k='cp_wipe_v111'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
+    (function(){ var _k='cp_wipe_v112'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.112', date: '2026-05-02', notes: [
+        'New front-page logo — inline SVG with chrome/neon lettering, bumpers, flippers and ball decoration'
+      ]},
       { v: 'v0.0.111', date: '2026-05-02', notes: [
         'Add basic soundscape — Web Audio synthesised sounds',
         'Mute/unmute toggle added'
