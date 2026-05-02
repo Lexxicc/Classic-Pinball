@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.113</title>
+<title>Classic Pinball v0.0.114</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -262,7 +262,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.113</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.114</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -273,7 +273,7 @@
     <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">CONTROLS</div>
     <div><span style="color:var(--color-glow)">LEFT PADDLE</span> — Tap left half of screen / Arrow Left / Z</div>
     <div><span style="color:var(--color-glow)">RIGHT PADDLE</span> — Tap right half of screen / Arrow Right / /</div>
-    <p style="margin-top:6px;opacity:0.75">Tap anywhere to launch the ball when it's ready.</p>
+    <p style="margin-top:6px;opacity:0.75">Press the left or right paddle to launch — left fires up-right, right fires up-left.</p>
   </div>
   <div>
     <div style="color:var(--color-glow);font-weight:bold;font-size:1.2rem;text-transform:uppercase;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:8px;letter-spacing:0.1em">BUMPERS</div>
@@ -305,8 +305,8 @@
   <div class="tap-hint left">L</div>
   <div class="tap-hint right">R</div>
 </div>
-<div id="msg">TAP TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.113</p>
+<div id="msg">PRESS PADDLE TO LAUNCH</div>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.114</p>
 </div>
 
 <script>
@@ -412,8 +412,14 @@ function sfxGameOver() {
 }
 // ─── End audio ───────────────────────────────────────────────────────────────
 
-    (function(){ var _k='cp_wipe_v113'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
+    (function(){ var _k='cp_wipe_v114'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.114', date: '2026-05-02', notes: [
+        'Reduced overall ball speed by ~20% — lower launch velocity, tighter speed cap',
+        'Widened both bottom paddles by ~33% for easier ball control',
+        'Replaced tap-to-launch with paddle-launch — left paddle fires ball up-right at 45 deg, right paddle fires up-left at 315 deg',
+        'Bumpers are now smaller, doubled in count, and drift slowly around the board bouncing off walls'
+      ]},
       { v: 'v0.0.113', date: '2026-05-02', notes: [
         'Fixed right flipper / key binding — event.code was KeySlash (invalid); corrected to Slash',
         'Fixed bumper lit state not clearing on ball reset — b.lit now reset to 0 in resetBall()'
@@ -511,16 +517,20 @@ const flippers = {
   left:  { x: 100, y: H - 60, angle: 0.5,  pressed: false },
   right: { x: 300, y: H - 60, angle: Math.PI - 0.5, pressed: false }
 };
-const FL = 60; // flipper length
+const FL = 80;
 
-// Bumpers
-// hits: total times this bumper has been struck by the current ball (resets per ball)
+function _rv() { return (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.2); }
 const bumpers = [
-  { x: 120, y: 200, r: 22, lit: 0, active: false, hits: 0 },
-  { x: 280, y: 200, r: 22, lit: 0, active: false, hits: 0 },
-  { x: 200, y: 150, r: 22, lit: 0, active: false, hits: 0 },
-  { x: 150, y: 300, r: 18, lit: 0, active: false, hits: 0 },
-  { x: 250, y: 300, r: 18, lit: 0, active: false, hits: 0 },
+  { x: 120, y: 200, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 280, y: 200, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 200, y: 150, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 150, y: 300, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 250, y: 300, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 80,  y: 250, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 320, y: 250, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 200, y: 380, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 140, y: 120, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
+  { x: 260, y: 120, r: 13, lit: 0, active: false, hits: 0, vx: _rv(), vy: _rv() },
 ];
 
 // Walls (slingshots) — as line segments the ball bounces off
@@ -536,10 +546,9 @@ function resetBumpers() {
   bumpers.forEach(b => { b.active = false; b.lit = 0; b.hits = 0; });
 }
 
-const DROP_X = [67, 133, 200, 267, 333]; // 5 evenly spaced drop positions
 function resetBall() {
-  ball.x = DROP_X[Math.floor(Math.random() * DROP_X.length)];
-  ball.y = -ball.r;
+  ball.x = W / 2;
+  ball.y = H - 80;
   ball.vx = 0;
   ball.vy = 0;
   ball.active = false;
@@ -549,13 +558,19 @@ function resetBall() {
   allBumpersCleared = false;
   multEl.textContent = 'x1.0';
   bumpers.forEach(b => { b.hits = 0; b.active = false; b.lit = 0; });
-  msgEl.textContent = 'TAP TO LAUNCH';
+  msgEl.textContent = 'PRESS PADDLE TO LAUNCH';
 }
 
-function launchBall() {
+function launchBall(side) {
   if (ball.active || gameOver) return;
-  ball.vy = 2;
-  ball.vx = (Math.random() - 0.5) * 3;
+  const f = flippers[side];
+  const tip = flipperTip(f);
+  ball.x = tip.x;
+  ball.y = tip.y;
+  const angle = side === 'left' ? -Math.PI / 4 : -3 * Math.PI / 4;
+  const spd = 8;
+  ball.vx = Math.cos(angle) * spd;
+  ball.vy = Math.sin(angle) * spd;
   ball.active = true;
   msgEl.textContent = '';
   sfxLaunch();
@@ -600,7 +615,7 @@ function collideFlipper(f) {
     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
     // boost on flipper press
     const boost = f.pressed ? 1.4 : 1.0;
-    const launch = Math.max(speed, 10) * boost;
+    const launch = Math.min(Math.max(speed, 8) * boost, 17);
     ball.vx = nx * launch;
     ball.vy = ny * launch;
     // push out — clearance must match the collision threshold (ball.r + 6) to prevent re-entry next frame
@@ -643,7 +658,7 @@ function collideBumper(b) {
       }
     }
     const nx = dx / dist, ny = dy / dist;
-    const speed = Math.max(Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy), 8) * 1.1;
+    const speed = Math.min(Math.max(Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy), 6) * 1.1, 17);
     ball.vx = nx * speed;
     ball.vy = ny * speed;
     ball.x = b.x + nx * (ball.r + b.r + 1);
@@ -672,7 +687,7 @@ function update() {
   ball.vx *= 0.999;
 
   // Speed cap — prevents tunneling through paddles and bumpers at very high velocity
-  const MAX_SPEED = 22;
+  const MAX_SPEED = 17;
   const spd = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
   if (spd > MAX_SPEED) { const s = MAX_SPEED / spd; ball.vx *= s; ball.vy *= s; }
 
@@ -686,8 +701,17 @@ function update() {
   // Top wall
   if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy = Math.abs(ball.vy) * 0.85; }
 
-  // Bumpers
-  bumpers.forEach(b => { if (b.lit > 0) b.lit--; collideBumper(b); });
+  // Bumpers — drift each bumper, bounce off board walls, then collide with ball
+  bumpers.forEach(b => {
+    b.x += b.vx;
+    b.y += b.vy;
+    if (b.x - b.r < 0)  { b.x = b.r;     b.vx = Math.abs(b.vx); }
+    if (b.x + b.r > W)  { b.x = W - b.r; b.vx = -Math.abs(b.vx); }
+    if (b.y - b.r < 35) { b.y = 35 + b.r; b.vy = Math.abs(b.vy); }
+    if (b.y + b.r > H - 160) { b.y = H - 160 - b.r; b.vy = -Math.abs(b.vy); }
+    if (b.lit > 0) b.lit--;
+    collideBumper(b);
+  });
 
   // Gutter-guide walls (slingshots)
   walls.forEach(collideWall);
@@ -827,27 +851,32 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-// Controls
 document.addEventListener('keydown', e => {
-  if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') { if (!flippers.left.pressed)  { sfxFlipper(); } flippers.left.pressed  = true; }
-  if (e.code === 'ArrowRight' || e.code === 'Slash') { if (!flippers.right.pressed) { sfxFlipper(); } flippers.right.pressed = true; }
+  if (e.code === 'ArrowLeft' || e.code === 'KeyZ') {
+    if (!flippers.left.pressed) { sfxFlipper(); }
+    flippers.left.pressed = true;
+    if (!ball.active && !gameOver) launchBall('left');
+  }
+  if (e.code === 'ArrowRight' || e.code === 'Slash') {
+    if (!flippers.right.pressed) { sfxFlipper(); }
+    flippers.right.pressed = true;
+    if (!ball.active && !gameOver) launchBall('right');
+  }
 });
 document.addEventListener('keyup', e => {
   if (e.code === 'ArrowLeft'  || e.code === 'KeyZ') flippers.left.pressed  = false;
   if (e.code === 'ArrowRight' || e.code === 'Slash') flippers.right.pressed = false;
 });
 
-// Touch / mobile
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
   [...e.changedTouches].forEach(t => {
     const r = canvas.getBoundingClientRect();
     const cx = (t.clientX - r.left) * (W / r.width);
-    if (cx < W / 2) { if (!flippers.left.pressed)  sfxFlipper(); flippers.left.pressed  = true; }
-    else             { if (!flippers.right.pressed) sfxFlipper(); flippers.right.pressed = true; }
+    const side = cx < W / 2 ? 'left' : 'right';
+    if (side === 'left') { if (!flippers.left.pressed)  sfxFlipper(); flippers.left.pressed  = true; }
+    else                 { if (!flippers.right.pressed) sfxFlipper(); flippers.right.pressed = true; }
     if (gameOver) {
-      // Score was already recorded in update() when the last ball was lost; wipe state for new game.
-      // Show the ready state first — ball launches on the next tap, consistent with keyboard behaviour.
       score = 0; scoreEl.textContent = 0;
       best = getBestFromScores(); bestEl.textContent = best;
       ballsLeft = 5; ballsEl.textContent = 5;
@@ -855,7 +884,7 @@ canvas.addEventListener('touchstart', e => {
       resetBumpers();
       resetBall();
     } else if (!ball.active) {
-      launchBall();
+      launchBall(side);
     }
   });
 }, { passive: false });
