@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.3</title>
+<title>Classic Pinball v0.0.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -121,7 +121,7 @@
         .hidden { display: none !important; }
         .btn-pixel { padding: 4px 12px; text-transform: uppercase; font-weight: bold; border: 4px solid var(--color-primary); background: var(--color-panel); box-shadow: inset -2px -2px 0px var(--color-shadow); cursor: pointer; }
         .btn-pixel:hover { background: var(--color-primary); color: var(--color-bg-dark); }
-        .menu-scroll { background: linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-panel) 45%, var(--color-panel) 55%, var(--color-bg-dark) 100%); border: 6px solid var(--color-primary); box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-primary) 55%, transparent), 0 0 28px 4px color-mix(in srgb, var(--color-primary) 28%, transparent), 0 0 70px color-mix(in srgb, var(--color-primary) 12%, transparent), inset 0 0 40px rgba(0,0,0,0.45); width: 640px; max-width: 92vw; max-height: 92vh; overflow-y: auto; scrollbar-width: none; }
+        .menu-scroll { background: linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-panel) 45%, var(--color-panel) 55%, var(--color-bg-dark) 100%); border: 6px solid var(--color-primary); box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-primary) 55%, transparent), 0 0 28px 4px color-mix(in srgb, var(--color-primary) 28%, transparent), 0 0 70px color-mix(in srgb, var(--color-primary) 12%, transparent), inset 0 0 40px rgba(0,0,0,0.45); width: 640px; max-width: 92vw; max-height: 92dvh; overflow-y: auto; scrollbar-width: none; }
         .menu-scroll::-webkit-scrollbar { display: none; }
         .start-menu-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 24px; font-family: 'VT323', monospace; font-size: 1.45rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-glow); background: transparent; border: none; border-bottom: 2px solid var(--color-shadow); cursor: pointer; text-shadow: 2px 2px 0 var(--color-shadow); text-align: left; transition: background 0.12s, padding-left 0.12s; }
         .start-menu-btn:hover { background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: #fff; padding-left: 28px; }
@@ -262,7 +262,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.3</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.4</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -306,7 +306,13 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS PADDLE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.3</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.4</p>
+<div id="cp-gameover" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;gap:12px;padding:24px;text-align:center">
+  <div style="font-family:monospace;font-size:clamp(16px,5vw,28px);letter-spacing:4px;text-transform:uppercase;color:#fbbf24">GAME OVER</div>
+  <div id="cp-go-score" style="font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:2px;color:#9ca3af;margin-bottom:12px"></div>
+  <button type="button" onclick="cpPlayAgain()" style="background:#141414;border:2px solid #ff0;color:#ff0;font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;min-width:160px">PLAY AGAIN</button>
+  <button type="button" onclick="cpMainMenu()" style="background:#141414;border:2px solid #555;color:#888;font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;min-width:160px">MAIN MENU</button>
+</div>
 </div>
 
 <script>
@@ -414,6 +420,7 @@ function sfxGameOver() {
 
     (function(){ var _k='cp_wipe_v2'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.4', date: '2026-05-03', notes: ['Version bump.'] },
       { v: 'v0.0.3', date: '2026-05-02', notes: [
         'Fixed bumper scoring — repeat hits now correctly award 50 pts instead of being blocked by the active flag',
         'Fixed keyboard lock after game over — keydown/keyup handlers now bail out immediately when gameOver is true',
@@ -488,6 +495,23 @@ function sfxGameOver() {
         }
     });
     function startGame() { history.pushState({ panel: 'game' }, ''); document.getElementById('start-overlay').classList.add('hidden'); document.getElementById('game-container').classList.remove('hidden'); initGame(); }
+    function cpPlayAgain() {
+        document.getElementById('cp-gameover').classList.add('hidden');
+        score = 0; scoreEl.textContent = 0;
+        best = getBestFromScores(); bestEl.textContent = best;
+        ballsLeft = 5; ballsEl.textContent = 5;
+        gameOver = false;
+        msgEl.textContent = 'PRESS PADDLE TO LAUNCH';
+        resetBumpers();
+        resetBall();
+    }
+    function cpMainMenu() {
+        document.getElementById('cp-gameover').classList.add('hidden');
+        gameOver = false;
+        document.getElementById('game-container').classList.add('hidden');
+        document.getElementById('start-overlay').classList.remove('hidden');
+        showStartPanel('main');
+    }
 
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -746,6 +770,8 @@ function update() {
       bestEl.textContent = best;
       msgEl.textContent = 'GAME OVER — TAP TO RESTART';
       sfxGameOver();
+      document.getElementById('cp-go-score').textContent = 'SCORE: ' + score;
+      document.getElementById('cp-gameover').classList.remove('hidden');
     } else {
       sfxBallLost();
       resetBall();
