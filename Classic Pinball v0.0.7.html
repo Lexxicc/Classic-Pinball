@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="author" content="lexxicc">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.5</title>
+<title>Classic Pinball v0.0.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -249,9 +249,6 @@
         paint-order="stroke"
         stroke="#000" stroke-width="2">PINBALL</text>
 
-  <!-- Horizontal rule lines flanking "CLASSIC" -->
-  <line x1="60" y1="36" x2="208" y2="36" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
-  <line x1="312" y1="36" x2="460" y2="36" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
 </svg>
 </div>
                 <div class="flex items-center justify-center gap-3 mt-2"><div class="flex-grow h-px" style="background:linear-gradient(to right,transparent,var(--color-primary))"></div><span style="font-size:1rem; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.4em;">KEEP THE BALL ALIVE</span><div class="flex-grow h-px" style="background:linear-gradient(to left,transparent,var(--color-primary))"></div></div>
@@ -263,7 +260,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.5</p>
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0 24px; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.7</p>
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -307,7 +304,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS PADDLE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.5</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.7</p>
 <div id="cp-gameover" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;gap:12px;padding:24px;text-align:center">
   <div style="font-family:monospace;font-size:clamp(16px,5vw,28px);letter-spacing:4px;text-transform:uppercase;color:#fbbf24">GAME OVER</div>
   <div id="cp-go-score" style="font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:2px;color:#9ca3af;margin-bottom:12px"></div>
@@ -409,18 +406,15 @@ function sfxBallLost() {
   } catch(e) {}
 }
 function sfxGameOver() {
-  // Low thud + descending phrase
-  playNoise(0.12, 0.3);
-  playTone(220, 0.25, 'square', 0.25);
-  playTone(180, 0.2,  'sine',   0.2,  0.2);
-  playTone(140, 0.2,  'sine',   0.2,  0.38);
-  playTone(100, 0.3,  'sine',   0.25, 0.55);
-  playTone(70,  0.4,  'triangle', 0.2, 0.8);
+  // Game-over sound removed per user request — function kept as a no-op so
+  // existing call sites don't need rewiring.
 }
 // ─── End audio ───────────────────────────────────────────────────────────────
 
     (function(){ var _k='cp_wipe_v2'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
+      { v: 'v0.0.7', date: '2026-05-04', notes: ['Floating bumpers with lissajous drift added; 10 colour variants; game-over sound removed.'] },
+      { v: 'v0.0.6', date: '2026-05-04', notes: ['Version bump.'] },
       { v: 'v0.0.5', date: '2026-05-04', notes: [
         'Overhauled gameplay to traditional pinball — ball now launches up the right-side plunger lane and drops into the playfield from the top.',
         'Two flippers at the bottom (left and right); tap either side to launch.',
@@ -562,18 +556,36 @@ const flippers = {
 };
 const FL = 80;
 
-const bumpers = [
-  { x:  90, y: 110, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 200, y:  90, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 310, y: 110, r: 14, lit: 0, active: false, hits: 0 },
-  { x:  70, y: 210, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 175, y: 200, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 280, y: 210, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 110, y: 310, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 200, y: 290, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 290, y: 310, r: 14, lit: 0, active: false, hits: 0 },
-  { x: 200, y: 390, r: 14, lit: 0, active: false, hits: 0 },
+// Each bumper carries its own colour/glow plus a slow lissajous drift around
+// its anchor position. ax/ay = anchor, am = drift radius (px), fr = angular
+// frequency (rad/s), ph = phase offset so they don't all wobble in sync.
+const BUMPER_COLOURS = [
+  { col: '#ff5500', glow: '#ff8833' },
+  { col: '#ffd700', glow: '#fff080' },
+  { col: '#00ffff', glow: '#80ffff' },
+  { col: '#ff44ff', glow: '#ff99ff' },
+  { col: '#33ff66', glow: '#99ff99' },
+  { col: '#ff3355', glow: '#ff7799' },
+  { col: '#3399ff', glow: '#80c0ff' },
+  { col: '#ffaa33', glow: '#ffcc77' },
+  { col: '#aaff33', glow: '#cce088' },
+  { col: '#aa55ff', glow: '#cc99ff' },
 ];
+const _bumperAnchors = [
+  [ 90, 110], [200,  90], [310, 110],
+  [ 70, 210], [175, 200], [280, 210],
+  [110, 310], [200, 290], [290, 310],
+  [200, 390],
+];
+const bumpers = _bumperAnchors.map((p, i) => ({
+  x: p[0], y: p[1], ax: p[0], ay: p[1],
+  r: 14, lit: 0, active: false, hits: 0,
+  am: 4 + (i % 3),                                // 4–6 px drift radius
+  fr: 0.35 + (i * 0.04),                          // 0.35–0.71 rad/s, slightly different per bumper
+  ph: (i * 1.7) % (Math.PI * 2),                  // de-synced starting phase
+  col: BUMPER_COLOURS[i].col,
+  glow: BUMPER_COLOURS[i].glow,
+}));
 
 // Walls — as line segments the ball bounces off
 const walls = [
@@ -607,8 +619,8 @@ function launchBall() {
   if (ball.active || gameOver) return;
   ball.x = 378;
   ball.y = H - 80;
-  ball.vx = -0.5;
-  ball.vy = -25;
+  ball.vx = -0.4;
+  ball.vy = -20;
   ball.inLane = true;
   ball.active = true;
   msgEl.textContent = '';
@@ -656,7 +668,7 @@ function collideFlipper(f) {
     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
     // boost on flipper press
     const boost = f.pressed ? 1.4 : 1.0;
-    const launch = Math.min(Math.max(speed, 8) * boost, 17);
+    const launch = Math.min(Math.max(speed, 6.5) * boost, 14);
     ball.vx = nx * launch;
     ball.vy = ny * launch;
     // push out — clearance must match the collision threshold (ball.r + 6) to prevent re-entry next frame
@@ -700,7 +712,7 @@ function collideBumper(b) {
       }
     }
     const nx = dx / dist, ny = dy / dist;
-    const speed = Math.min(Math.max(Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy), 6) * 1.1, 17);
+    const speed = Math.min(Math.max(Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy), 5) * 1.1, 14);
     ball.vx = nx * speed;
     ball.vy = ny * speed;
     ball.x = b.x + nx * (ball.r + b.r + 1);
@@ -716,7 +728,7 @@ function update() {
 
   // Plunger lane — ball races up the right rail before entering the playfield
   if (ball.inLane) {
-    ball.vy += 0.35;
+    ball.vy += 0.28;
     ball.x += ball.vx;
     ball.y += ball.vy;
     ball.x = Math.max(364, Math.min(391, ball.x));
@@ -724,8 +736,8 @@ function update() {
       ball.inLane = false;
       ball.x = 346;
       ball.y = ball.r;
-      ball.vx = -4;
-      ball.vy = 3;
+      ball.vx = -3.2;
+      ball.vy = 2.4;
     }
     return;
   }
@@ -740,13 +752,13 @@ function update() {
   }
 
   // Gravity
-  ball.vy += 0.35;
+  ball.vy += 0.28;
 
   // Drag
   ball.vx *= 0.999;
 
   // Speed cap — prevents tunneling through paddles and bumpers at very high velocity
-  const MAX_SPEED = 17;
+  const MAX_SPEED = 14;
   const spd = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
   if (spd > MAX_SPEED) { const s = MAX_SPEED / spd; ball.vx *= s; ball.vy *= s; }
 
@@ -760,8 +772,11 @@ function update() {
   // Top wall
   if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy = Math.abs(ball.vy) * 0.85; }
 
-  // Bumpers — static; tick lit state and check collision
+  // Bumpers — slow lissajous drift around each anchor + lit decay + collision
+  const _bumperT = performance.now() / 1000;
   bumpers.forEach(b => {
+    b.x = b.ax + Math.cos(_bumperT * b.fr + b.ph) * b.am;
+    b.y = b.ay + Math.sin(_bumperT * b.fr * 0.7 + b.ph) * b.am;
     if (b.lit > 0) b.lit--;
     collideBumper(b);
   });
@@ -829,9 +844,10 @@ function drawBumper(b) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-  ctx.fillStyle = b.lit > 0 ? '#ff0' : '#f50';
-  ctx.shadowColor = b.lit > 0 ? '#ff0' : '#f80';
-  ctx.shadowBlur = b.lit > 0 ? 20 : 6;
+  // Use bumper's own colour; flash to white on lit, glow uses paired colour
+  ctx.fillStyle  = b.lit > 0 ? '#ffffff' : b.col;
+  ctx.shadowColor = b.lit > 0 ? b.glow   : b.col;
+  ctx.shadowBlur  = b.lit > 0 ? 22       : 8;
   ctx.fill();
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 2;
