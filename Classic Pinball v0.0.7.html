@@ -259,6 +259,7 @@
                 <button class="start-menu-btn" onclick="showStartPanel('highscores')"><span>High Scores</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
                 <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
+                <button class="start-menu-btn" onclick="showStartPanel('challenge')"><span>Accept Challenge</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
             </div>
             <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0 24px; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.7</p>
         </div>
@@ -287,7 +288,40 @@
 </div><div class="subpanel-footer"></div></div>
         <div id="start-highscores" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>High Scores</h2></div><div class="p-5" id="highscore-list"><p style="text-align:center;color:var(--color-primary);opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p></div><div class="subpanel-footer"></div></div>
         <div id="start-patchnotes" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Patch Notes</h2></div><div id="patchnotes-list" class="p-5 text-[12px] space-y-5"></div><div class="subpanel-footer"></div></div>
-        <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6"><p style="color:var(--color-primary);opacity:0.5;text-align:center;font-size:0.875rem;margin-top:32px">No settings available yet.</p></div><div class="subpanel-footer"></div></div>
+        <div id="start-settings" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Settings</h2></div><div class="p-6 space-y-6">
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:12px">Audio</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="color:var(--color-primary)">Sound Effects</span>
+      <button id="sfx-toggle" onclick="toggleSFX()" style="background:var(--color-panel);border:2px solid var(--color-primary);color:var(--color-primary);font-family:'VT323',monospace;font-size:1rem;padding:4px 14px;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;min-width:54px">ON</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="color:var(--color-primary)">SFX Volume</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="range" id="sfx-vol-slider" min="0" max="100" value="100" oninput="updateSFXVolume(this.value)" style="accent-color:var(--color-primary);width:120px">
+        <span id="sfx-vol-label" style="color:var(--color-glow);width:40px;text-align:right">100%</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div style="color:var(--color-glow);font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;border-bottom:2px solid var(--color-shadow);padding-bottom:6px;margin-bottom:12px">Display</div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="color:var(--color-primary)">Brightness</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="range" id="brightness-slider" min="20" max="100" value="100" oninput="updateBrightness(this.value)" style="accent-color:var(--color-primary);width:120px">
+        <span id="brightness-label" style="color:var(--color-glow);width:40px;text-align:right">100%</span>
+      </div>
+    </div>
+  </div>
+</div><div class="subpanel-footer"></div></div>
+        <div id="start-challenge" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Accept Challenge</h2></div><div class="p-6 space-y-4">
+  <p style="color:var(--color-primary);opacity:0.8;font-size:0.875rem">Paste a challenge link or code to play against your opponent's score.</p>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <input id="challenge-accept-input" type="text" placeholder="Paste challenge link or code..." style="background:#111;border:2px solid var(--color-primary);color:#fff;font-family:monospace;font-size:0.85rem;padding:10px 12px;width:100%;outline:none" />
+    <p id="challenge-accept-error" style="color:#ef4444;font-size:0.8rem;display:none">Invalid challenge code.</p>
+    <button onclick="acceptChallengeFromInput()" style="background:var(--color-panel);border:2px solid var(--color-primary);color:var(--color-primary);font-family:'VT323',monospace;font-size:1.1rem;padding:8px 20px;cursor:pointer;text-transform:uppercase;letter-spacing:0.1em;width:100%">ACCEPT CHALLENGE</button>
+  </div>
+</div><div class="subpanel-footer"></div></div>
     </div>
 
 <div id="game-container" class="hidden w-full h-full flex flex-col items-center">
@@ -310,6 +344,7 @@
   <div id="cp-go-score" style="font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:2px;color:#9ca3af;margin-bottom:12px"></div>
   <button type="button" onclick="cpPlayAgain()" style="background:#141414;border:2px solid #ff0;color:#ff0;font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;min-width:160px">PLAY AGAIN</button>
   <button type="button" onclick="cpMainMenu()" style="background:#141414;border:2px solid #555;color:#888;font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;min-width:160px">MAIN MENU</button>
+  <button type="button" id="copy-challenge-btn" onclick="copyChallenge()" style="background:#141414;border:2px solid #00ffff;color:#00ffff;font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;min-width:160px">CHALLENGE LINK</button>
 </div>
 </div>
 
@@ -321,6 +356,7 @@ function _audioCtx() {
   return _ac.ctx;
 }
 let _muted = false;
+let _sfxVol = 1.0;
 function toggleMute() {
   _muted = !_muted;
   const btn = document.getElementById('mute-btn');
@@ -338,7 +374,7 @@ function playTone(freq, dur, type='sine', vol=0.3, delay=0) {
     osc.connect(gain); gain.connect(ctx.destination);
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-    gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+    gain.gain.setValueAtTime(vol * _sfxVol, ctx.currentTime + delay);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur);
     osc.start(ctx.currentTime + delay);
     osc.stop(ctx.currentTime + delay + dur);
@@ -354,7 +390,7 @@ function playNoise(dur, vol=0.2) {
     const src = ctx.createBufferSource();
     const gain = ctx.createGain();
     src.buffer = buf; src.connect(gain); gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.setValueAtTime(vol * _sfxVol, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
     src.start(); src.stop(ctx.currentTime + dur);
   } catch(e) {}
@@ -411,7 +447,6 @@ function sfxGameOver() {
 }
 // ─── End audio ───────────────────────────────────────────────────────────────
 
-    (function(){ var _k='cp_wipe_v2'; if(localStorage.getItem(_k)!=='1'){ localStorage.removeItem('classicpinball_hs'); localStorage.removeItem('cpb_best'); localStorage.setItem(_k,'1'); } })();
     const PATCH_NOTES = [
       { v: 'v0.0.7', date: '2026-05-04', notes: ['Floating bumpers with lissajous drift added; 10 colour variants; game-over sound removed.'] },
       { v: 'v0.0.6', date: '2026-05-04', notes: ['Version bump.'] },
@@ -476,7 +511,7 @@ function sfxGameOver() {
     function getScores() { try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; } }
     function renderHighScores() { const el = document.getElementById('highscore-list'); const scores = getScores(); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); const shadow = getComputedStyle(document.documentElement).getPropertyValue('--color-shadow').trim(); if (!scores.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p>`; return; } el.innerHTML = scores.map((s,i) => `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid ${shadow};font-size:0.875rem"><span style="color:${primary};width:24px;text-align:right">${i+1}.</span><span style="flex:1;color:#fff">${s.label||'—'}</span><span style="color:${glow};font-weight:bold">${s.score}</span><span style="color:${primary};opacity:0.5;font-size:0.75rem">${s.date}</span></div>`).join(''); }
     function renderPatchNotes() { const el = document.getElementById('patchnotes-list'); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); if (!PATCH_NOTES.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No patch notes yet.</p>`; return; } el.innerHTML = PATCH_NOTES.map(p => `<div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><span style="color:${glow};font-weight:bold">${p.v}</span><span style="color:${primary};opacity:0.6;font-size:10px">${p.date}</span></div><ul style="margin:0;padding:0;list-style:none">${p.notes.map(n=>`<li style="color:#d1d5db">• ${n}</li>`).join('')}</ul></div>`).join(''); }
-    const PANELS = ['main','howtoplay','settings','highscores','patchnotes'];
+    const PANELS = ['main','howtoplay','settings','highscores','patchnotes','challenge'];
     function showStartPanel(name, fromPopstate=false) { PANELS.forEach(p => { const el = document.getElementById('start-'+p); if (el) el.classList.toggle('hidden', p !== name); }); if (name === 'highscores') renderHighScores(); if (name === 'patchnotes') renderPatchNotes(); if (!fromPopstate && name !== 'main') history.pushState({ panel: name }, ''); }
     window.addEventListener('popstate', function(e) {
         const ov = document.getElementById('start-overlay');
@@ -513,6 +548,43 @@ function sfxGameOver() {
         document.getElementById('start-overlay').classList.remove('hidden');
         showStartPanel('main');
     }
+    function copyChallenge() {
+        var code = btoa(JSON.stringify({ score: score }));
+        var url = location.href.split('#')[0] + '#m=' + code;
+        navigator.clipboard.writeText(url).then(function() {
+            var btn = document.getElementById('copy-challenge-btn');
+            if (btn) { btn.textContent = 'COPIED!'; setTimeout(function() { btn.textContent = 'CHALLENGE LINK'; }, 2000); }
+        }).catch(function() { prompt('Copy this challenge link:', url); });
+    }
+    function acceptChallengeFromInput() {
+        var val = (document.getElementById('challenge-accept-input').value || '').trim();
+        var code = val; var mIdx = val.indexOf('#m=');
+        if (mIdx !== -1) code = val.slice(mIdx + 3);
+        var err = document.getElementById('challenge-accept-error');
+        try {
+            var data = JSON.parse(atob(code));
+            if (!data || typeof data.score !== 'number') throw new Error();
+            if (err) err.style.display = 'none';
+            location.href = location.href.split('#')[0] + '#m=' + code;
+        } catch(e) { if (err) err.style.display = 'block'; }
+    }
+    function toggleSFX() {
+        _muted = !_muted;
+        var btn = document.getElementById('mute-btn');
+        if (btn) { btn.textContent = _muted ? 'MUTE' : 'SFX'; btn.style.opacity = _muted ? '0.4' : '1'; }
+        var tog = document.getElementById('sfx-toggle');
+        if (tog) tog.textContent = _muted ? 'OFF' : 'ON';
+    }
+    function updateSFXVolume(v) {
+        _sfxVol = parseInt(v) / 100;
+        var label = document.getElementById('sfx-vol-label');
+        if (label) label.textContent = v + '%';
+    }
+    function updateBrightness(v) {
+        document.body.style.filter = 'brightness(' + (parseInt(v) / 100) + ')';
+        var label = document.getElementById('brightness-label');
+        if (label) label.textContent = v + '%';
+    }
 
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -524,6 +596,7 @@ const ballsEl = document.getElementById('balls');
 const multEl  = document.getElementById('mult');
 const msgEl   = document.getElementById('msg');
 
+let _challengeTarget = null;
 let score = 0;
 let best = getBestFromScores();
 let ballsLeft = 5;
@@ -612,7 +685,7 @@ function resetBall() {
   allBumpersCleared = false;
   multEl.textContent = 'x1.0';
   bumpers.forEach(b => { b.hits = 0; b.active = false; b.lit = 0; });
-  msgEl.textContent = 'PRESS PADDLE TO LAUNCH';
+  msgEl.textContent = _challengeTarget !== null ? 'BEAT ' + _challengeTarget + ' pts — PRESS PADDLE' : 'PRESS PADDLE TO LAUNCH';
 }
 
 function launchBall() {
@@ -1001,6 +1074,15 @@ function initGame() {
   resetBall();
   loop();
 }
+
+(function() {
+    var hash = location.hash;
+    if (!hash.startsWith('#m=')) return;
+    try {
+        var data = JSON.parse(atob(hash.slice(3)));
+        if (data && typeof data.score === 'number') { _challengeTarget = data.score; }
+    } catch(e) {}
+})();
 </script>
 </body>
 </html>
