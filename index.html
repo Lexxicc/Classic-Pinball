@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="author" content="lexxicc">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Classic Pinball v0.0.12</title>
+<title>Classic Pinball v0.0.13</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4ade80">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -130,11 +130,91 @@
         .hidden { display: none !important; }
         .btn-pixel { padding: 4px 12px; text-transform: uppercase; font-weight: bold; border: 4px solid var(--color-primary); background: var(--color-panel); box-shadow: inset -2px -2px 0px var(--color-shadow); cursor: pointer; touch-action: manipulation; }
         .btn-pixel:hover { background: var(--color-primary); color: var(--color-bg-dark); }
-        .menu-scroll { background: linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-panel) 45%, var(--color-panel) 55%, var(--color-bg-dark) 100%); border: 6px solid var(--color-primary); box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-primary) 55%, transparent), 0 0 28px 4px color-mix(in srgb, var(--color-primary) 28%, transparent), 0 0 70px color-mix(in srgb, var(--color-primary) 12%, transparent), inset 0 0 40px rgba(0,0,0,0.45); width: 640px; max-width: 92vw; max-height: 92dvh; overflow-y: auto; scrollbar-width: none; }
+        /* ── PANEL — canonical SoT 5-zone container ── */
+        .menu-scroll {
+          background: linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-panel) 45%, var(--color-panel) 55%, var(--color-bg-dark) 100%);
+          border: 6px solid var(--color-primary);
+          box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-primary) 55%, transparent), 0 0 28px 4px color-mix(in srgb, var(--color-primary) 28%, transparent), 0 0 70px color-mix(in srgb, var(--color-primary) 12%, transparent), inset 0 0 40px rgba(0,0,0,0.45);
+          width: 640px; max-width: 94vw;
+          height: calc(100dvh - 3.2vw); max-height: calc(100dvh - 3.2vw);
+          margin: 1.6vw;
+          overflow-y: auto; scrollbar-width: none;
+          /* THE LAYOUT RULES — CRITICAL */
+          display: flex; flex-direction: column;
+          padding: 1.5vw; gap: 1.5vw;
+          box-sizing: border-box;
+        }
         .menu-scroll::-webkit-scrollbar { display: none; }
-        .start-menu-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 24px; font-family: 'VT323', monospace; font-size: 1.45rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-glow); background: transparent; border: none; border-bottom: 2px solid var(--color-shadow); cursor: pointer; touch-action: manipulation; text-shadow: 2px 2px 0 var(--color-shadow); text-align: left; transition: background 0.12s, padding-left 0.12s; }
+
+        /* ── ZONE 1 — LOGO (canonical flex/stretch) ── */
+        .logo-container {
+          flex: 1 1 auto;
+          min-height: calc(240px - 1.5vw);
+          display: flex; align-items: center; justify-content: center;
+          overflow: hidden;
+        }
+        .logo-container svg,
+        .logo-container img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        /* ── ZONE 2 — TAGLINE ── */
+        .tagline-container {
+          flex: 0 0 auto;
+          display: flex; align-items: center; justify-content: center;
+          gap: 12px; padding: 8px 16px;
+        }
+        .tagline-line { flex: 1; height: 1px; }
+        .tagline-line.left  { background: linear-gradient(to right, transparent, var(--color-primary)); }
+        .tagline-line.right { background: linear-gradient(to left,  transparent, var(--color-primary)); }
+        .tagline-text {
+          font-family: 'VT323', monospace; font-size: 0.95rem;
+          color: var(--color-primary); text-transform: uppercase;
+          letter-spacing: 0.35em; white-space: nowrap;
+        }
+
+        /* ── ZONE 3 — BUTTONS ── */
+        .menu-buttons { flex: 0 0 auto; display: flex; flex-direction: column; }
+        .start-menu-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 3vw 24px; font-family: 'VT323', monospace; font-size: 1.45rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-glow); background: transparent; border: none; border-bottom: 2px solid var(--color-shadow); cursor: pointer; touch-action: manipulation; text-shadow: 2px 2px 0 var(--color-shadow); text-align: left; transition: background 0.12s, padding-left 0.12s; }
         .start-menu-btn:hover { background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: #fff; padding-left: 28px; }
         .start-menu-btn:last-child { border-bottom: none; }
+        .start-menu-btn .arrow { margin-left: auto; font-size: 1rem; opacity: 0.4; font-family: sans-serif; }
+
+        /* ── ZONE 4 — CHALLENGE (inline) ── */
+        .challenge-container {
+          flex: 0 0 auto;
+          padding: 0.75vw 16px 8px;
+          border-top: 2px solid var(--color-shadow);
+        }
+        .challenge-label {
+          font-family: 'VT323', monospace; font-size: 0.75rem;
+          color: var(--color-primary); text-transform: uppercase;
+          letter-spacing: 0.15em; margin: 0 0 0.75vw 0;
+        }
+        .challenge-row { display: flex; gap: 8px; align-items: center; }
+        .challenge-input {
+          flex: 1; padding: 8px 10px; background: var(--color-panel);
+          border: 2px solid var(--color-primary); color: var(--color-glow);
+          font-family: 'VT323', monospace; font-size: 0.9rem; outline: none; min-width: 0;
+          box-sizing: border-box;
+        }
+        .challenge-go {
+          padding: 8px 14px; font-family: 'VT323', monospace; font-size: 1rem;
+          text-transform: uppercase; background: var(--color-primary);
+          color: var(--color-bg-dark); border: none; cursor: pointer; white-space: nowrap;
+        }
+
+        /* ── ZONE 5 — FOOTER ── */
+        .menu-footer {
+          flex: 0 0 auto;
+          display: flex; align-items: center; justify-content: center;
+          gap: 12px; padding: 0.75vw 16px; opacity: 0.6;
+        }
+        .footer-line { flex: 1; height: 1px; }
+        .footer-line.left  { background: linear-gradient(to right, transparent, var(--color-glow)); }
+        .footer-line.right { background: linear-gradient(to left,  transparent, var(--color-glow)); }
+        .footer-text {
+          font-family: 'VT323', monospace; font-size: 13px; color: var(--color-glow);
+          text-transform: uppercase; letter-spacing: 0.3em; white-space: nowrap;
+        }
         .start-back-btn { font-family: 'VT323', monospace; font-size: 1.1rem; text-transform: uppercase; padding: 6px 14px; color: var(--color-primary); background: transparent; border: 4px solid var(--color-primary); cursor: pointer; touch-action: manipulation; letter-spacing: 0.05em; }
         .start-back-btn:hover { background: var(--color-primary); color: var(--color-bg-dark); }
         .subpanel-header { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--color-bg-dark); position: sticky; top: 0; z-index: 10; border-bottom: 6px solid var(--color-primary); }
@@ -150,131 +230,112 @@
 <body>
     <div id="start-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" style="background:#000;">
         <div id="start-main" class="menu-scroll relative z-10">
-            <div class="text-center pt-4 pb-4 px-6" style="border-bottom: 4px solid var(--color-shadow);">
-                <div style="min-height:180px; display:flex; align-items:center; justify-content:center; padding: 8px 0;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 175" width="520" height="175" style="max-width:min(520px,90vw);height:auto;" role="img" aria-label="Classic Pinball">
-  <defs>
-    <!-- Yellow glow for main text -->
-    <filter id="cp-glow-y" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="8"   result="blur2"/>
-      <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <!-- Cyan glow for sub-text and decorations -->
-    <filter id="cp-glow-c" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur2"/>
-      <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <!-- Chrome gradient for letter fill -->
-    <linearGradient id="cp-chrome" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="30%"  stop-color="#ffff88"/>
-      <stop offset="55%"  stop-color="#ffee00"/>
-      <stop offset="80%"  stop-color="#cc9900"/>
-      <stop offset="100%" stop-color="#ffee00"/>
-    </linearGradient>
-    <!-- Orange accent gradient for "PINBALL" -->
-    <linearGradient id="cp-orange" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="25%"  stop-color="#ffaa44"/>
-      <stop offset="60%"  stop-color="#ff5500"/>
-      <stop offset="100%" stop-color="#cc3300"/>
-    </linearGradient>
-    <!-- Ball chrome gradient -->
-    <radialGradient id="cp-ball" cx="38%" cy="35%" r="60%">
-      <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="40%"  stop-color="#aaddff"/>
-      <stop offset="100%" stop-color="#004466"/>
-    </radialGradient>
-    <!-- Bumper gradient -->
-    <radialGradient id="cp-bump" cx="40%" cy="35%" r="55%">
-      <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="50%"  stop-color="#00ffff" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#004444"/>
-    </radialGradient>
-  </defs>
 
-  <!-- Background panel -->
-  <rect x="4" y="4" width="512" height="167" rx="10" ry="10" fill="#0a0a0a" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
-
-  <!-- Decorative corner star — top-left -->
-  <g transform="translate(28,28)" filter="url(#cp-glow-c)">
-    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
-  </g>
-  <!-- Decorative corner star — top-right -->
-  <g transform="translate(492,28)" filter="url(#cp-glow-c)">
-    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
-  </g>
-  <!-- Decorative corner star — bottom-left -->
-  <g transform="translate(28,148)" filter="url(#cp-glow-c)">
-    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
-  </g>
-  <!-- Decorative corner star — bottom-right -->
-  <g transform="translate(492,148)" filter="url(#cp-glow-c)">
-    <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
-  </g>
-
-  <!-- Left flipper decoration -->
-  <g filter="url(#cp-glow-c)">
-    <line x1="18" y1="130" x2="58" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-    <circle cx="18" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
-  </g>
-  <!-- Right flipper decoration (mirrored) -->
-  <g filter="url(#cp-glow-c)">
-    <line x1="502" y1="130" x2="462" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-    <circle cx="502" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
-  </g>
-
-  <!-- Bumper circles — left cluster -->
-  <circle cx="52" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
-  <circle cx="52" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
-  <circle cx="68" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
-
-  <!-- Bumper circles — right cluster -->
-  <circle cx="468" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
-  <circle cx="468" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
-  <circle cx="452" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
-
-  <!-- Ball in centre-top -->
-  <circle cx="260" cy="22" r="11" fill="url(#cp-ball)" filter="url(#cp-glow-c)" opacity="0.95"/>
-  <circle cx="260" cy="22" r="11" fill="none" stroke="#aaddff" stroke-width="1" opacity="0.7"/>
-
-  <!-- "CLASSIC" — top line -->
-  <text x="260" y="82"
-        font-family="'VT323', monospace"
-        font-size="62"
-        text-anchor="middle"
-        letter-spacing="6"
-        fill="url(#cp-chrome)"
-        filter="url(#cp-glow-y)"
-        paint-order="stroke"
-        stroke="#000" stroke-width="2">CLASSIC</text>
-
-  <!-- "PINBALL" — bottom line, orange accent -->
-  <text x="260" y="148"
-        font-family="'VT323', monospace"
-        font-size="72"
-        text-anchor="middle"
-        letter-spacing="8"
-        fill="url(#cp-orange)"
-        filter="url(#cp-glow-y)"
-        paint-order="stroke"
-        stroke="#000" stroke-width="2">PINBALL</text>
-
-</svg>
-</div>
-                <div class="flex items-center justify-center gap-3 mt-2"><div class="flex-grow h-px" style="background:linear-gradient(to right,transparent,var(--color-primary))"></div><span style="font-size:1rem; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.4em;">KEEP THE BALL ALIVE</span><div class="flex-grow h-px" style="background:linear-gradient(to left,transparent,var(--color-primary))"></div></div>
+            <!-- ZONE 1 — LOGO -->
+            <div class="logo-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 175" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Classic Pinball">
+                    <defs>
+                        <filter id="cp-glow-y" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1"/>
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="8"   result="blur2"/>
+                            <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <filter id="cp-glow-c" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur2"/>
+                            <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <linearGradient id="cp-chrome" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%"   stop-color="#ffffff"/>
+                            <stop offset="30%"  stop-color="#ffff88"/>
+                            <stop offset="55%"  stop-color="#ffee00"/>
+                            <stop offset="80%"  stop-color="#cc9900"/>
+                            <stop offset="100%" stop-color="#ffee00"/>
+                        </linearGradient>
+                        <linearGradient id="cp-orange" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%"   stop-color="#ffffff"/>
+                            <stop offset="25%"  stop-color="#ffaa44"/>
+                            <stop offset="60%"  stop-color="#ff5500"/>
+                            <stop offset="100%" stop-color="#cc3300"/>
+                        </linearGradient>
+                        <radialGradient id="cp-ball" cx="38%" cy="35%" r="60%">
+                            <stop offset="0%"   stop-color="#ffffff"/>
+                            <stop offset="40%"  stop-color="#aaddff"/>
+                            <stop offset="100%" stop-color="#004466"/>
+                        </radialGradient>
+                        <radialGradient id="cp-bump" cx="40%" cy="35%" r="55%">
+                            <stop offset="0%"   stop-color="#ffffff"/>
+                            <stop offset="50%"  stop-color="#00ffff" stop-opacity="0.9"/>
+                            <stop offset="100%" stop-color="#004444"/>
+                        </radialGradient>
+                    </defs>
+                    <rect x="4" y="4" width="512" height="167" rx="10" ry="10" fill="#0a0a0a" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+                    <g transform="translate(28,28)" filter="url(#cp-glow-c)">
+                        <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
+                    </g>
+                    <g transform="translate(492,28)" filter="url(#cp-glow-c)">
+                        <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.9"/>
+                    </g>
+                    <g transform="translate(28,148)" filter="url(#cp-glow-c)">
+                        <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
+                    </g>
+                    <g transform="translate(492,148)" filter="url(#cp-glow-c)">
+                        <polygon points="0,-9 2,-3 8,-3 3,1 5,8 0,4 -5,8 -3,1 -8,-3 -2,-3" fill="#00ffff" opacity="0.7"/>
+                    </g>
+                    <g filter="url(#cp-glow-c)">
+                        <line x1="18" y1="130" x2="58" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+                        <circle cx="18" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
+                    </g>
+                    <g filter="url(#cp-glow-c)">
+                        <line x1="502" y1="130" x2="462" y2="118" stroke="#00ffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+                        <circle cx="502" cy="130" r="5" fill="#00ffff" opacity="0.9"/>
+                    </g>
+                    <circle cx="52" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
+                    <circle cx="52" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+                    <circle cx="68" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
+                    <circle cx="468" cy="68" r="10" fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.8"/>
+                    <circle cx="468" cy="68" r="10" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+                    <circle cx="452" cy="55" r="8"  fill="url(#cp-bump)" filter="url(#cp-glow-c)" opacity="0.7"/>
+                    <circle cx="260" cy="22" r="11" fill="url(#cp-ball)" filter="url(#cp-glow-c)" opacity="0.95"/>
+                    <circle cx="260" cy="22" r="11" fill="none" stroke="#aaddff" stroke-width="1" opacity="0.7"/>
+                    <text x="260" y="82" font-family="'VT323', monospace" font-size="62" text-anchor="middle" letter-spacing="6" fill="url(#cp-chrome)" filter="url(#cp-glow-y)" paint-order="stroke" stroke="#000" stroke-width="2">CLASSIC</text>
+                    <text x="260" y="148" font-family="'VT323', monospace" font-size="72" text-anchor="middle" letter-spacing="8" fill="url(#cp-orange)" filter="url(#cp-glow-y)" paint-order="stroke" stroke="#000" stroke-width="2">PINBALL</text>
+                </svg>
             </div>
-            <div class="flex flex-col">
-                <button class="start-menu-btn" onclick="startGame()"><span>Play</span><span class="ml-auto text-base opacity-40 font-sans">↵</span></button>
-                <button class="start-menu-btn" onclick="showStartPanel('howtoplay')"><span>How to Play</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
-                <button class="start-menu-btn" onclick="showStartPanel('highscores')"><span>High Scores</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
-                <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
-                <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
-                <button class="start-menu-btn" onclick="showStartPanel('challenge')"><span>Accept Challenge</span><span class="ml-auto text-base opacity-40 font-sans">›</span></button>
+
+            <!-- ZONE 2 — TAGLINE -->
+            <div class="tagline-container">
+                <div class="tagline-line left"></div>
+                <span class="tagline-text">Flippers · Score · Tilt</span>
+                <div class="tagline-line right"></div>
             </div>
-            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.35em; color:var(--color-primary); opacity:0.6; text-align:center; padding:12px 0 24px; border-top: 1px solid var(--color-shadow);">&copy; Tacticon Studios 2026 &nbsp;&mdash;&nbsp; v0.0.12</p>
+
+            <!-- ZONE 3 — BUTTONS -->
+            <div class="menu-buttons">
+                <button class="start-menu-btn" onclick="startGame()"><span>Play</span><span class="arrow">↵</span></button>
+                <button class="start-menu-btn" onclick="showStartPanel('howtoplay')"><span>How to Play</span><span class="arrow">›</span></button>
+                <button class="start-menu-btn" onclick="showStartPanel('highscores')"><span>High Scores</span><span class="arrow">›</span></button>
+                <button class="start-menu-btn" onclick="showStartPanel('patchnotes')"><span>Patch Notes</span><span class="arrow">›</span></button>
+                <button class="start-menu-btn" onclick="showStartPanel('settings')"><span>Settings</span><span class="arrow">›</span></button>
+            </div>
+
+            <!-- ZONE 4 — CHALLENGE (inline) -->
+            <div class="challenge-container">
+                <p class="challenge-label">Accept a Challenge</p>
+                <div class="challenge-row">
+                    <input id="challenge-accept-input" type="text" class="challenge-input" placeholder="Paste challenge code...">
+                    <button class="challenge-go" onclick="acceptChallengeFromInput()">GO</button>
+                </div>
+                <p id="challenge-accept-error" style="display:none;margin-top:8px;color:#ef4444;font-size:0.8rem;font-family:'VT323',monospace;">Invalid challenge code.</p>
+            </div>
+
+            <!-- ZONE 5 — FOOTER -->
+            <div class="menu-footer">
+                <div class="footer-line left"></div>
+                <span class="footer-text">Tacticon Studios 2026 · v0.0.13</span>
+                <div class="footer-line right"></div>
+            </div>
+
         </div>
         <div id="start-howtoplay" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>How to Play</h2></div><div class="p-5 space-y-5" style="font-family:'VT323',monospace;font-size:1.1rem;color:#d1d5db">
   <div>
@@ -327,14 +388,6 @@
     </div>
   </div>
 </div><div class="subpanel-footer"></div></div>
-        <div id="start-challenge" class="menu-scroll hidden relative z-10"><div class="subpanel-header"><button class="start-back-btn" onclick="showStartPanel('main')">← Back</button><h2>Accept Challenge</h2></div><div class="p-6 space-y-4">
-  <p style="color:var(--color-primary);opacity:0.8;font-size:0.875rem">Paste a challenge link or code to play against your opponent's score.</p>
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <input id="challenge-accept-input" type="text" placeholder="Paste challenge link or code..." style="background:#111;border:2px solid var(--color-primary);color:#fff;font-family:monospace;font-size:0.85rem;padding:10px 12px;width:100%;outline:none" />
-    <p id="challenge-accept-error" style="color:#ef4444;font-size:0.8rem;display:none">Invalid challenge code.</p>
-    <button onclick="acceptChallengeFromInput()" style="background:var(--color-panel);border:2px solid var(--color-primary);color:var(--color-primary);font-family:'VT323',monospace;font-size:1.1rem;padding:8px 20px;cursor:pointer;text-transform:uppercase;letter-spacing:0.1em;width:100%">ACCEPT CHALLENGE</button>
-  </div>
-</div><div class="subpanel-footer"></div></div>
     </div>
 
 <div id="game-container" class="hidden w-full h-full flex flex-col items-center">
@@ -351,7 +404,7 @@
   <div class="tap-hint right">R</div>
 </div>
 <div id="msg">PRESS PADDLE TO LAUNCH</div>
-<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.12</p>
+<p id="game-footer" style="font-size:10px;text-align:center;opacity:0.4;padding:8px;letter-spacing:0.3em;text-transform:uppercase;">&copy; Tacticon Studios 2026 &mdash; v0.0.13</p>
 <div id="cp-gameover" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;gap:12px;padding:24px;text-align:center">
   <div style="font-family:monospace;font-size:clamp(16px,5vw,28px);letter-spacing:4px;text-transform:uppercase;color:#fbbf24">GAME OVER</div>
   <div id="cp-go-score" style="font-family:monospace;font-size:clamp(10px,3vw,14px);letter-spacing:2px;color:#9ca3af;margin-bottom:12px"></div>
@@ -530,7 +583,7 @@ function sfxGameOver() {
     function getScores() { try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; } }
     function renderHighScores() { const el = document.getElementById('highscore-list'); const scores = getScores(); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); const shadow = getComputedStyle(document.documentElement).getPropertyValue('--color-shadow').trim(); if (!scores.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No scores recorded yet.</p>`; return; } el.innerHTML = scores.map((s,i) => `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid ${shadow};font-size:0.875rem"><span style="color:${primary};width:24px;text-align:right">${i+1}.</span><span style="flex:1;color:#fff">${s.label||'—'}</span><span style="color:${glow};font-weight:bold">${s.score}</span><span style="color:${primary};opacity:0.5;font-size:0.75rem">${s.date}</span></div>`).join(''); }
     function renderPatchNotes() { const el = document.getElementById('patchnotes-list'); const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(); const glow = getComputedStyle(document.documentElement).getPropertyValue('--color-glow').trim(); if (!PATCH_NOTES.length) { el.innerHTML = `<p style="text-align:center;color:${primary};opacity:0.5;font-size:0.875rem;margin-top:32px">No patch notes yet.</p>`; return; } el.innerHTML = PATCH_NOTES.map(p => `<div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><span style="color:${glow};font-weight:bold">${p.v}</span><span style="color:${primary};opacity:0.6;font-size:10px">${p.date}</span></div><ul style="margin:0;padding:0;list-style:none">${p.notes.map(n=>`<li style="color:#d1d5db">• ${n}</li>`).join('')}</ul></div>`).join(''); }
-    const PANELS = ['main','howtoplay','settings','highscores','patchnotes','challenge'];
+    const PANELS = ['main','howtoplay','settings','highscores','patchnotes'];
     function showStartPanel(name, fromPopstate=false) { PANELS.forEach(p => { const el = document.getElementById('start-'+p); if (el) el.classList.toggle('hidden', p !== name); }); if (name === 'highscores') renderHighScores(); if (name === 'patchnotes') renderPatchNotes(); if (!fromPopstate && name !== 'main') history.pushState({ panel: name }, ''); }
     window.addEventListener('popstate', function(e) {
         const ov = document.getElementById('start-overlay');
